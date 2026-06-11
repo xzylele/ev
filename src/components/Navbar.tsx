@@ -26,7 +26,7 @@ const Navbar = () => {
                 <Zap className="h-5 w-5 fill-current" />
               </div>
               <span className="text-xl font-extrabold tracking-tight bg-gradient-to-r from-white via-slate-100 to-electric-green bg-clip-text text-transparent">
-                EV <span className="text-electric-green">COMPARE</span>
+                EV <span className="text-electric-green">THAI</span>
               </span>
             </Link>
           </div>

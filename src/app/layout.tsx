@@ -40,11 +40,11 @@ export default function RootLayout({
                   <Zap className="h-4 w-4 fill-current" />
                 </div>
                 <span className="text-md font-bold tracking-tight text-white">
-                  EV <span className="text-electric-green">COMPARE</span>
+                  EV <span className="text-electric-green">THAI</span>
                 </span>
               </div>
               <p className="text-xs text-slate-500">
-                © {new Date().getFullYear()} EV Compare Thailand. พัฒนาขึ้นด้วย Next.js และ Tailwind CSS เชื่อมต่อระบบ Headless CMS MongoDB
+                © {new Date().getFullYear()} EV Compare Thailand.
               </p>
               <div className="flex space-x-4 text-xs text-slate-400">
                 <span className="hover:text-electric-green cursor-pointer transition-colors duration-200">ข้อกำหนดการใช้งาน</span>
