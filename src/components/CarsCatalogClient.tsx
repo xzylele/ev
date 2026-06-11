@@ -30,6 +30,8 @@ interface CarSpec {
   voltageArchitecture: string;
   v2lSupport: boolean;
   v2lPower: number;
+  avgRating?: number | null;
+  reviewCount?: number;
 }
 
 interface CarsCatalogClientProps {
@@ -216,7 +218,7 @@ const CarsCatalogClient: React.FC<CarsCatalogClientProps> = ({ initialCars }) =>
     <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 py-8">
       {/* Title */}
       <div className="mb-8">
-        <h1 className="text-3xl font-extrabold tracking-tight text-white sm:text-4xl bg-gradient-to-r from-white via-slate-200 to-slate-400 bg-clip-text text-transparent">
+        <h1 className="text-3xl font-extrabold tracking-tight text-white sm:text-4xl text-balance">
           ค้นหาและกรองสเปครถยนต์ไฟฟ้า
         </h1>
         <p className="mt-2 text-sm text-slate-400">ค้นหารถ EV ที่เหมาะกับสไตล์การขับขี่และงบประมาณของคุณ</p>
@@ -224,7 +226,7 @@ const CarsCatalogClient: React.FC<CarsCatalogClientProps> = ({ initialCars }) =>
 
       <div className="flex flex-col lg:flex-row gap-8 items-start">
         {/* Filters Sidebar - Desktop */}
-        <aside className="hidden lg:block w-72 flex-shrink-0 bg-ev-card/40 border border-ev-border rounded-2xl p-6 sticky top-24">
+        <aside className="hidden lg:block w-72 flex-shrink-0 bg-ev-card/40 border border-ev-border rounded-xl p-6 sticky top-24">
           <div className="flex items-center justify-between border-b border-ev-border pb-4 mb-6">
             <h2 className="text-md font-bold text-white flex items-center gap-2">
               <SlidersHorizontal className="h-4 w-4 text-electric-green" />
@@ -232,7 +234,7 @@ const CarsCatalogClient: React.FC<CarsCatalogClientProps> = ({ initialCars }) =>
             </h2>
             <button
               onClick={handleResetFilters}
-              className="text-xs font-semibold text-slate-500 hover:text-electric-green transition-colors"
+              className="text-xs font-semibold text-slate-400 hover:text-electric-green transition-colors focus-visible:ring-2 focus-visible:ring-electric-green focus-visible:outline-none rounded-sm px-1.5 py-0.5"
             >
               ล้างทั้งหมด
             </button>
@@ -250,9 +252,9 @@ const CarsCatalogClient: React.FC<CarsCatalogClientProps> = ({ initialCars }) =>
               step="50000"
               value={maxPrice}
               onChange={(e) => setMaxPrice(Number(e.target.value))}
-              className="w-full h-1.5 bg-slate-800 rounded-lg appearance-none cursor-pointer accent-electric-green"
+              className="w-full h-1.5 bg-slate-800 rounded-lg appearance-none cursor-pointer accent-electric-green focus-visible:ring-2 focus-visible:ring-electric-green focus-visible:outline-none"
             />
-            <div className="flex justify-between text-[10px] text-slate-500 mt-1 font-semibold">
+            <div className="flex justify-between text-[10px] text-slate-400 mt-1 font-semibold">
               <span>5 แสน</span>
               <span>1.75 ล้าน</span>
               <span>3 ล้าน+</span>
@@ -271,9 +273,9 @@ const CarsCatalogClient: React.FC<CarsCatalogClientProps> = ({ initialCars }) =>
               step="20"
               value={minRange}
               onChange={(e) => setMinRange(Number(e.target.value))}
-              className="w-full h-1.5 bg-slate-800 rounded-lg appearance-none cursor-pointer accent-electric-blue"
+              className="w-full h-1.5 bg-slate-800 rounded-lg appearance-none cursor-pointer accent-electric-blue focus-visible:ring-2 focus-visible:ring-electric-green focus-visible:outline-none"
             />
-            <div className="flex justify-between text-[10px] text-slate-500 mt-1 font-semibold">
+            <div className="flex justify-between text-[10px] text-slate-400 mt-1 font-semibold">
               <span>0 กม.</span>
               <span>350 กม.</span>
               <span>700 กม.+</span>
@@ -285,7 +287,7 @@ const CarsCatalogClient: React.FC<CarsCatalogClientProps> = ({ initialCars }) =>
             <span className="block text-sm font-semibold text-slate-300 mb-3">ยี่ห้อ (Brand)</span>
             <div className="space-y-2">
               {brands.map((brand) => (
-                <label key={brand} className="flex items-center text-sm text-slate-400 hover:text-white cursor-pointer select-none">
+                <label key={brand} className="flex items-center text-sm text-slate-400 hover:text-white cursor-pointer select-none focus-within:text-white">
                   <input
                     type="checkbox"
                     checked={selectedBrands.includes(brand)}
@@ -294,7 +296,7 @@ const CarsCatalogClient: React.FC<CarsCatalogClientProps> = ({ initialCars }) =>
                         prev.includes(brand) ? prev.filter(b => b !== brand) : [...prev, brand]
                       );
                     }}
-                    className="mr-3 h-4 w-4 rounded border-slate-700 bg-slate-900 text-electric-green focus:ring-0 focus:ring-offset-0 cursor-pointer accent-electric-green"
+                    className="mr-3 h-4 w-4 rounded border-ev-border bg-slate-900 text-electric-green focus-visible:ring-2 focus-visible:ring-electric-green focus-visible:ring-offset-2 focus-visible:ring-offset-ev-dark outline-none cursor-pointer accent-electric-green"
                   />
                   {brand}
                 </label>
@@ -307,7 +309,7 @@ const CarsCatalogClient: React.FC<CarsCatalogClientProps> = ({ initialCars }) =>
             <span className="block text-sm font-semibold text-slate-300 mb-3">ประเภทตัวถัง</span>
             <div className="space-y-2">
               {bodyTypes.map((type) => (
-                <label key={type} className="flex items-center text-sm text-slate-400 hover:text-white cursor-pointer select-none">
+                <label key={type} className="flex items-center text-sm text-slate-400 hover:text-white cursor-pointer select-none focus-within:text-white">
                   <input
                     type="checkbox"
                     checked={selectedBodyTypes.includes(type)}
@@ -316,7 +318,7 @@ const CarsCatalogClient: React.FC<CarsCatalogClientProps> = ({ initialCars }) =>
                         prev.includes(type) ? prev.filter(t => t !== type) : [...prev, type]
                       );
                     }}
-                    className="mr-3 h-4 w-4 rounded border-slate-700 bg-slate-900 text-electric-green focus:ring-0 focus:ring-offset-0 cursor-pointer accent-electric-green"
+                    className="mr-3 h-4 w-4 rounded border-ev-border bg-slate-900 text-electric-green focus-visible:ring-2 focus-visible:ring-electric-green focus-visible:ring-offset-2 focus-visible:ring-offset-ev-dark outline-none cursor-pointer accent-electric-green"
                   />
                   {type}
                 </label>
@@ -329,7 +331,7 @@ const CarsCatalogClient: React.FC<CarsCatalogClientProps> = ({ initialCars }) =>
             <span className="block text-sm font-semibold text-slate-300 mb-3">ระบบขับเคลื่อน</span>
             <div className="space-y-2">
               {driveTypes.map((type) => (
-                <label key={type} className="flex items-center text-sm text-slate-400 hover:text-white cursor-pointer select-none">
+                <label key={type} className="flex items-center text-sm text-slate-400 hover:text-white cursor-pointer select-none focus-within:text-white">
                   <input
                     type="checkbox"
                     checked={selectedDriveTypes.includes(type)}
@@ -338,7 +340,7 @@ const CarsCatalogClient: React.FC<CarsCatalogClientProps> = ({ initialCars }) =>
                         prev.includes(type) ? prev.filter(t => t !== type) : [...prev, type]
                       );
                     }}
-                    className="mr-3 h-4 w-4 rounded border-slate-700 bg-slate-900 text-electric-green focus:ring-0 focus:ring-offset-0 cursor-pointer accent-electric-green"
+                    className="mr-3 h-4 w-4 rounded border-ev-border bg-slate-900 text-electric-green focus-visible:ring-2 focus-visible:ring-electric-green focus-visible:ring-offset-2 focus-visible:ring-offset-ev-dark outline-none cursor-pointer accent-electric-green"
                   />
                   {type === 'FWD' ? 'ขับเคลื่อนล้อหน้า (FWD)' : type === 'RWD' ? 'ขับเคลื่อนล้อหลัง (RWD)' : 'ขับเคลื่อนสี่ล้อ (AWD)'}
                 </label>
@@ -348,21 +350,21 @@ const CarsCatalogClient: React.FC<CarsCatalogClientProps> = ({ initialCars }) =>
 
           {/* Special Tech */}
           <div className="border-t border-ev-border pt-6 space-y-3">
-            <label className="flex items-center text-sm text-slate-400 hover:text-white cursor-pointer select-none">
+            <label className="flex items-center text-sm text-slate-400 hover:text-white cursor-pointer select-none focus-within:text-white">
               <input
                 type="checkbox"
                 checked={v2lOnly}
                 onChange={(e) => setV2lOnly(e.target.checked)}
-                className="mr-3 h-4 w-4 rounded border-slate-700 bg-slate-900 text-electric-green focus:ring-0 focus:ring-offset-0 cursor-pointer accent-electric-green"
+                className="mr-3 h-4 w-4 rounded border-ev-border bg-slate-900 text-electric-green focus-visible:ring-2 focus-visible:ring-electric-green focus-visible:ring-offset-2 focus-visible:ring-offset-ev-dark outline-none cursor-pointer accent-electric-green"
               />
               จ่ายไฟภายนอก (V2L)
             </label>
-            <label className="flex items-center text-sm text-slate-400 hover:text-white cursor-pointer select-none">
+            <label className="flex items-center text-sm text-slate-400 hover:text-white cursor-pointer select-none focus-within:text-white">
               <input
                 type="checkbox"
                 checked={voltage800vOnly}
                 onChange={(e) => setVoltage800vOnly(e.target.checked)}
-                className="mr-3 h-4 w-4 rounded border-slate-700 bg-slate-900 text-electric-green focus:ring-0 focus:ring-offset-0 cursor-pointer accent-electric-green"
+                className="mr-3 h-4 w-4 rounded border-ev-border bg-slate-900 text-electric-green focus-visible:ring-2 focus-visible:ring-electric-green focus-visible:ring-offset-2 focus-visible:ring-offset-ev-dark outline-none cursor-pointer accent-electric-green"
               />
               สถาปัตยกรรม 800V
             </label>
@@ -374,20 +376,20 @@ const CarsCatalogClient: React.FC<CarsCatalogClientProps> = ({ initialCars }) =>
           {/* Search Bar & Mobile Filter Toggle */}
           <div className="flex flex-col sm:flex-row items-center gap-4 mb-6">
             <div className="relative w-full flex-grow">
-              <Search className="absolute left-4 top-1/2 h-5 w-5 -translate-y-1/2 text-slate-500" />
+              <Search className="absolute left-4 top-1/2 h-5 w-5 -translate-y-1/2 text-slate-400" />
               <input
                 type="text"
                 placeholder="ค้นหายี่ห้อ รุ่น หรือประเภทสเปค เช่น Tesla Model Y..."
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
-                className="w-full rounded-2xl border border-ev-border bg-ev-card/40 py-3.5 pl-12 pr-4 text-sm text-white placeholder-slate-500 outline-none focus:border-slate-700 transition-all duration-300"
+                className="w-full rounded-sm border border-ev-border bg-ev-card/40 py-3.5 pl-12 pr-4 text-sm text-white placeholder-slate-400 outline-none focus:border-electric-green focus:ring-1 focus:ring-electric-green transition-all duration-300"
               />
             </div>
             
             {/* Mobile Filter Toggle */}
             <button
               onClick={() => setShowFiltersMobile(!showFiltersMobile)}
-              className="lg:hidden flex items-center justify-center gap-2 rounded-2xl border border-ev-border bg-ev-card px-4 py-3.5 text-sm text-white w-full sm:w-auto hover:bg-slate-800 transition-all duration-200"
+              className="lg:hidden flex items-center justify-center gap-2 rounded-xl border border-ev-border bg-ev-card px-4 py-3.5 text-sm text-white w-full sm:w-auto hover:bg-slate-800 transition-all duration-200 focus-visible:ring-2 focus-visible:ring-electric-green focus-visible:outline-none"
             >
               <SlidersHorizontal className="h-4 w-4 text-electric-green" />
               <span>ตัวกรองการค้นหา</span>
@@ -396,12 +398,12 @@ const CarsCatalogClient: React.FC<CarsCatalogClientProps> = ({ initialCars }) =>
 
           {/* Mobile Filters Dropdown */}
           {showFiltersMobile && (
-            <div className="lg:hidden w-full bg-ev-card border border-ev-border rounded-2xl p-6 mb-6">
+            <div className="lg:hidden w-full bg-ev-card border border-ev-border rounded-xl p-6 mb-6">
               <div className="flex items-center justify-between border-b border-ev-border pb-4 mb-4">
                 <h3 className="font-bold text-white">คัดกรองผลลัพธ์</h3>
-                <button onClick={handleResetFilters} className="text-xs text-slate-500">ล้างตัวกรอง</button>
+                <button onClick={handleResetFilters} className="text-xs text-slate-400 hover:text-electric-green focus-visible:ring-2 focus-visible:ring-electric-green focus-visible:outline-none rounded-sm px-1 py-0.5">ล้างตัวกรอง</button>
               </div>
-
+ 
               {/* Price Filter Mobile */}
               <div className="mb-4">
                 <label className="block text-xs font-semibold text-slate-400 mb-2">
@@ -414,10 +416,10 @@ const CarsCatalogClient: React.FC<CarsCatalogClientProps> = ({ initialCars }) =>
                   step="50000"
                   value={maxPrice}
                   onChange={(e) => setMaxPrice(Number(e.target.value))}
-                  className="w-full accent-electric-green bg-slate-800"
+                  className="w-full accent-electric-green bg-slate-800 focus-visible:ring-2 focus-visible:ring-electric-green focus-visible:outline-none rounded-lg"
                 />
               </div>
-
+ 
               {/* Range Filter Mobile */}
               <div className="mb-4">
                 <label className="block text-xs font-semibold text-slate-400 mb-2">
@@ -430,7 +432,7 @@ const CarsCatalogClient: React.FC<CarsCatalogClientProps> = ({ initialCars }) =>
                   step="20"
                   value={minRange}
                   onChange={(e) => setMinRange(Number(e.target.value))}
-                  className="w-full accent-electric-blue bg-slate-800"
+                  className="w-full accent-electric-blue bg-slate-800 focus-visible:ring-2 focus-visible:ring-electric-green focus-visible:outline-none rounded-lg"
                 />
               </div>
 
@@ -448,7 +450,7 @@ const CarsCatalogClient: React.FC<CarsCatalogClientProps> = ({ initialCars }) =>
                             prev.includes(brand) ? prev.filter(b => b !== brand) : [...prev, brand]
                           );
                         }}
-                        className={`px-3 py-1.5 rounded-lg text-xs font-semibold border transition-all ${
+                        className={`px-3 py-1.5 rounded-lg text-xs font-semibold border transition-all focus-visible:ring-2 focus-visible:ring-electric-green focus-visible:outline-none ${
                           isSelected 
                             ? 'bg-electric-green/10 border-electric-green text-electric-green' 
                             : 'border-ev-border bg-slate-900 text-slate-400'
@@ -460,7 +462,7 @@ const CarsCatalogClient: React.FC<CarsCatalogClientProps> = ({ initialCars }) =>
                   })}
                 </div>
               </div>
-
+ 
               {/* Body Type Mobile */}
               <div className="mb-4">
                 <span className="block text-xs font-semibold text-slate-400 mb-2">ประเภทตัวถัง</span>
@@ -475,7 +477,7 @@ const CarsCatalogClient: React.FC<CarsCatalogClientProps> = ({ initialCars }) =>
                             prev.includes(type) ? prev.filter(t => t !== type) : [...prev, type]
                           );
                         }}
-                        className={`px-3 py-1.5 rounded-lg text-xs font-semibold border transition-all ${
+                        className={`px-3 py-1.5 rounded-lg text-xs font-semibold border transition-all focus-visible:ring-2 focus-visible:ring-electric-green focus-visible:outline-none ${
                           isSelected 
                             ? 'bg-electric-green/10 border-electric-green text-electric-green' 
                             : 'border-ev-border bg-slate-900 text-slate-400'
@@ -487,7 +489,7 @@ const CarsCatalogClient: React.FC<CarsCatalogClientProps> = ({ initialCars }) =>
                   })}
                 </div>
               </div>
-
+ 
               {/* Drive Type Mobile */}
               <div className="mb-4">
                 <span className="block text-xs font-semibold text-slate-400 mb-2">ระบบขับเคลื่อน</span>
@@ -502,7 +504,7 @@ const CarsCatalogClient: React.FC<CarsCatalogClientProps> = ({ initialCars }) =>
                             prev.includes(type) ? prev.filter(t => t !== type) : [...prev, type]
                           );
                         }}
-                        className={`px-3 py-1.5 rounded-lg text-xs font-semibold border transition-all ${
+                        className={`px-3 py-1.5 rounded-lg text-xs font-semibold border transition-all focus-visible:ring-2 focus-visible:ring-electric-blue focus-visible:outline-none ${
                           isSelected 
                             ? 'bg-electric-blue/10 border-electric-blue text-electric-blue' 
                             : 'border-ev-border bg-slate-900 text-slate-400'
@@ -514,24 +516,24 @@ const CarsCatalogClient: React.FC<CarsCatalogClientProps> = ({ initialCars }) =>
                   })}
                 </div>
               </div>
-
+ 
               {/* Special Options Mobile */}
               <div className="flex gap-4 pt-4 border-t border-ev-border/50">
-                <label className="flex items-center text-xs text-slate-400 hover:text-white cursor-pointer select-none">
+                <label className="flex items-center text-xs text-slate-400 hover:text-white cursor-pointer select-none focus-within:text-white">
                   <input
                     type="checkbox"
                     checked={v2lOnly}
                     onChange={(e) => setV2lOnly(e.target.checked)}
-                    className="mr-2 h-4 w-4 accent-electric-green bg-slate-900 border-slate-700 rounded"
+                    className="mr-2 h-4 w-4 accent-electric-green bg-slate-900 border-ev-border rounded focus-visible:ring-2 focus-visible:ring-electric-green focus-visible:ring-offset-2 focus-visible:ring-offset-ev-dark outline-none cursor-pointer"
                   />
                   จ่ายไฟ V2L
                 </label>
-                <label className="flex items-center text-xs text-slate-400 hover:text-white cursor-pointer select-none">
+                <label className="flex items-center text-xs text-slate-400 hover:text-white cursor-pointer select-none focus-within:text-white">
                   <input
                     type="checkbox"
                     checked={voltage800vOnly}
                     onChange={(e) => setVoltage800vOnly(e.target.checked)}
-                    className="mr-2 h-4 w-4 accent-electric-green bg-slate-900 border-slate-700 rounded"
+                    className="mr-2 h-4 w-4 accent-electric-green bg-slate-900 border-ev-border rounded focus-visible:ring-2 focus-visible:ring-electric-green focus-visible:ring-offset-2 focus-visible:ring-offset-ev-dark outline-none cursor-pointer"
                   />
                   ระบบ 800V
                 </label>
@@ -543,17 +545,17 @@ const CarsCatalogClient: React.FC<CarsCatalogClientProps> = ({ initialCars }) =>
           <div className="flex items-center justify-between mb-6 text-sm text-slate-400">
             <span>พบรถยนต์ไฟฟ้าทั้งหมด <span className="font-semibold text-white">{filteredGroups.length}</span> รุ่นหลัก</span>
             {(searchQuery || selectedBrands.length > 0 || selectedBodyTypes.length > 0 || selectedDriveTypes.length > 0 || maxPrice < 3000000 || minRange > 0 || v2lOnly || voltage800vOnly) && (
-              <button onClick={handleResetFilters} className="text-electric-green hover:underline">ล้างตัวกรองทั้งหมด</button>
+              <button onClick={handleResetFilters} className="text-electric-green hover:underline focus-visible:ring-2 focus-visible:ring-electric-green focus-visible:outline-none rounded-sm px-1">ล้างตัวกรองทั้งหมด</button>
             )}
           </div>
-
+ 
           {/* Cars Grid */}
           {filteredGroups.length === 0 ? (
-            <div className="flex flex-col items-center justify-center rounded-2xl border border-dashed border-ev-border py-16 text-center">
-              <span className="text-slate-500 font-medium">ไม่พบรถยนต์ไฟฟ้าที่ตรงกับเงื่อนไขการค้นหาของคุณ</span>
+            <div className="flex flex-col items-center justify-center rounded-xl border border-dashed border-ev-border py-16 text-center">
+              <span className="text-slate-400 font-medium">ไม่พบรถยนต์ไฟฟ้าที่ตรงกับเงื่อนไขการค้นหาของคุณ</span>
               <button
                 onClick={handleResetFilters}
-                className="mt-4 rounded-xl bg-slate-800 px-4 py-2 text-xs font-bold text-white hover:bg-slate-700 transition-all"
+                className="mt-4 rounded-xl bg-slate-800 px-4 py-2 text-xs font-bold text-white hover:bg-slate-700 transition-all focus-visible:ring-2 focus-visible:ring-electric-green focus-visible:outline-none"
               >
                 ดูสเปครถทั้งหมด
               </button>
@@ -577,6 +579,10 @@ const CarsCatalogClient: React.FC<CarsCatalogClientProps> = ({ initialCars }) =>
                 const minDc = Math.min(...dcPowers);
                 const maxDc = Math.max(...dcPowers);
 
+                const hps = matchingTrims.map((t) => t.horsepower);
+                const minHp = Math.min(...hps);
+                const maxHp = Math.max(...hps);
+
                 const displayRange = minRangeVal === maxRangeVal
                   ? `${minRangeVal} กม.`
                   : `${minRangeVal}-${maxRangeVal} กม.`;
@@ -585,12 +591,16 @@ const CarsCatalogClient: React.FC<CarsCatalogClientProps> = ({ initialCars }) =>
                   ? `${minDc} kW`
                   : `${minDc}-${maxDc} kW`;
 
+                const displayHp = minHp === maxHp
+                  ? `${minHp} HP`
+                  : `${minHp}-${maxHp} HP`;
+
                 const car = matchingTrims[0]; // Representative trim
 
                 return (
                   <div
                     key={group.key}
-                    className="flex flex-col overflow-hidden rounded-2xl border border-ev-border bg-ev-card/40 transition-all duration-300 hover:border-slate-700 hover:scale-[1.01]"
+                    className="group/card flex flex-col overflow-hidden rounded-xl border border-ev-border bg-ev-card/40 transition-all duration-300 hover:border-slate-600"
                   >
                     {/* Thumbnail Image */}
                     <div className="relative h-44 w-full overflow-hidden bg-slate-900">
@@ -598,47 +608,61 @@ const CarsCatalogClient: React.FC<CarsCatalogClientProps> = ({ initialCars }) =>
                       <img
                         src={car.image}
                         alt={`${group.brand} ${group.model}`}
-                        className="h-full w-full object-cover transition-transform duration-500 hover:scale-105"
+                        loading="lazy"
+                        className="h-full w-full object-cover transition-transform duration-500 group-hover/card:scale-105"
                       />
                       <div className="absolute top-3 right-3 rounded-lg bg-ev-dark/85 px-2 py-0.5 text-[10px] font-bold border border-ev-border text-electric-green uppercase">
                         {group.bodyType}
                       </div>
                     </div>
-
+ 
                     {/* Specifications Details */}
-                    <div className="flex flex-col p-5 flex-grow">
+                    <div className="flex flex-col p-6 flex-grow">
                       <div className="flex items-center justify-between">
-                        <span className="text-xs font-semibold tracking-wider text-slate-500 uppercase">{group.brand}</span>
-                        <div className="flex items-center text-amber-400 text-xs font-semibold">
-                          <Star className="h-3.5 w-3.5 fill-current mr-0.5" />
-                          <span>4.8</span>
-                        </div>
+                        <span className="text-xs font-semibold tracking-wider text-slate-400 uppercase">{group.brand}</span>
+                        {car.avgRating !== null ? (
+                          <div className="flex items-center text-amber-400 text-xs font-semibold" title={`เรตติ้งเฉลี่ยจาก ${car.reviewCount} รีวิว`}>
+                            <Star className="h-3.5 w-3.5 fill-current mr-0.5" />
+                            <span>{car.avgRating} ({car.reviewCount})</span>
+                          </div>
+                        ) : (
+                          <div className="flex items-center text-slate-400 text-xs font-semibold" title="ยังไม่มีรีวิวสำหรับรถรุ่นนี้">
+                            <Star className="h-3.5 w-3.5 mr-0.5" />
+                            <span>ไม่มีรีวิว</span>
+                          </div>
+                        )}
                       </div>
 
                       <h3 className="mt-1 text-md font-bold text-white leading-tight">
                         {group.model}
-                        <span className="block text-xs font-normal text-slate-400 mt-1">
+                      </h3>
+                      
+                      <div className="flex items-baseline justify-between mt-1.5 mb-1 gap-2">
+                        <span className="text-xs text-slate-400">
                           {group.trims.length > 1 ? `${group.trims.length} รุ่นย่อย` : car.trim}
                         </span>
-                      </h3>
+                        <span className="text-xs font-extrabold text-electric-green text-right">
+                          {formatPriceRange(minPrice, maxPriceVal)}
+                        </span>
+                      </div>
 
                       {/* Specs Row */}
                       <div className="grid grid-cols-3 gap-2 border-y border-ev-border/50 py-3 my-4 text-center">
                         <div className="flex flex-col items-center justify-center">
-                          <Zap className="h-3.5 w-3.5 text-slate-500 mb-1" />
-                          <span className="text-[9px] text-slate-500 uppercase font-semibold">ราคา</span>
-                          <span className="text-[10px] font-bold text-white leading-tight">
-                            {formatPriceRange(minPrice, maxPriceVal)}
+                          <Zap className="h-3.5 w-3.5 text-slate-400 mb-1" />
+                          <span className="text-[9px] text-slate-400 uppercase font-semibold">พละกำลัง</span>
+                          <span className="text-xs font-bold text-white leading-tight">
+                            {displayHp}
                           </span>
                         </div>
                         <div className="flex flex-col items-center justify-center">
                           <Gauge className="h-3.5 w-3.5 text-electric-green mb-1" />
-                          <span className="text-[9px] text-slate-500 uppercase font-semibold">ระยะทาง</span>
+                          <span className="text-[9px] text-slate-400 uppercase font-semibold">ระยะทาง</span>
                           <span className="text-xs font-bold text-electric-green">{displayRange}</span>
                         </div>
                         <div className="flex flex-col items-center justify-center">
                           <BatteryCharging className="h-3.5 w-3.5 text-electric-blue mb-1" />
-                          <span className="text-[9px] text-slate-500 uppercase font-semibold">ชาร์จ DC</span>
+                          <span className="text-[9px] text-slate-400 uppercase font-semibold">ชาร์จ DC</span>
                           <span className="text-xs font-bold text-electric-blue">{displayDC}</span>
                         </div>
                       </div>
@@ -646,16 +670,16 @@ const CarsCatalogClient: React.FC<CarsCatalogClientProps> = ({ initialCars }) =>
                       <div className="mt-auto flex gap-3">
                         <Link
                           href={`/cars/${car._id}`}
-                          className="flex-grow text-center rounded-xl bg-slate-800/80 hover:bg-slate-700/80 py-2.5 text-xs font-bold text-white transition-all duration-200 border border-transparent hover:border-slate-600"
+                          className="flex-grow text-center rounded-xl bg-slate-800/80 hover:bg-slate-700/80 py-2.5 text-xs font-bold text-white transition-all duration-200 border border-transparent hover:border-slate-600 focus-visible:ring-2 focus-visible:ring-electric-green focus-visible:outline-none"
                         >
                           เจาะลึกสเปค
                         </Link>
                         
                         <button
                           onClick={() => handleToggleCompareGroup(matchingTrims)}
-                          className={`px-3 rounded-xl border transition-all duration-300 flex items-center justify-center ${
+                          className={`px-3 rounded-xl border transition-all duration-300 flex items-center justify-center focus-visible:ring-2 focus-visible:ring-electric-green focus-visible:outline-none ${
                             isSelectedForCompare 
-                              ? 'bg-electric-green/10 border-electric-green text-electric-green glow-green' 
+                              ? 'bg-electric-green/10 border-electric-green text-electric-green' 
                               : 'border-ev-border text-slate-400 hover:text-white hover:border-slate-700'
                           }`}
                           title={isSelectedForCompare ? "ลบออกจากการเปรียบเทียบ" : "เพิ่มเข้าการเปรียบเทียบ"}

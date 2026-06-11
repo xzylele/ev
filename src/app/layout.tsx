@@ -27,7 +27,7 @@ export default function RootLayout({
         <Navbar />
 
         {/* Main Content */}
-        <main className="flex-grow w-full">
+        <main className="flex-grow w-full pb-20 md:pb-0">
           {children}
         </main>
 
@@ -36,14 +36,14 @@ export default function RootLayout({
           <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
             <div className="flex flex-col md:flex-row items-center justify-between gap-4">
               <div className="flex items-center space-x-2">
-                <div className="flex h-7 w-7 items-center justify-center rounded-lg bg-gradient-to-br from-electric-green to-electric-blue text-ev-dark">
+                <div className="flex h-7 w-7 items-center justify-center rounded-lg bg-electric-green text-ev-dark border border-ev-border">
                   <Zap className="h-4 w-4 fill-current" />
                 </div>
                 <span className="text-md font-bold tracking-tight text-white">
                   EV <span className="text-electric-green">THAI</span>
                 </span>
               </div>
-              <p className="text-xs text-slate-500">
+              <p className="text-xs text-slate-400">
                 © {new Date().getFullYear()} EV Compare Thailand.
               </p>
               <div className="flex space-x-4 text-xs text-slate-400">

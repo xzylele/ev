@@ -523,11 +523,11 @@ const CarDetailFullClient: React.FC<CarDetailFullClientProps> = ({
         </div>
 
         {/* Ratings Summary Dash */}
-        <div className="grid grid-cols-1 md:grid-cols-4 gap-6 mb-10 rounded-2xl border border-ev-border bg-ev-card/30 p-6">
+        <div className="grid grid-cols-1 md:grid-cols-4 gap-6 mb-10 rounded-xl border border-ev-border bg-ev-card/30 p-6">
           <div className="flex flex-col items-center justify-center border-b md:border-b-0 md:border-r border-ev-border pb-6 md:pb-0">
             <span className="text-5xl font-extrabold text-white">{avgOverall}</span>
             <div className="mt-2">{renderStars(Math.round(Number(avgOverall)))}</div>
-            <span className="text-xs text-slate-500 mt-2">จากทั้งหมด {reviews.length} รีวิว</span>
+            <span className="text-xs text-slate-400 mt-2">จากทั้งหมด {reviews.length} รีวิว</span>
           </div>
 
           <div className="col-span-3 grid grid-cols-1 sm:grid-cols-3 gap-6 pt-2">
@@ -551,7 +551,7 @@ const CarDetailFullClient: React.FC<CarDetailFullClientProps> = ({
 
         {/* Review Form */}
         {showForm && (
-          <form onSubmit={handleReviewSubmit} className="mb-10 rounded-2xl border border-slate-700 bg-ev-card p-6 md:p-8 animate-slide-up">
+          <form onSubmit={handleReviewSubmit} className="mb-10 rounded-xl border border-ev-border bg-ev-card p-6 md:p-8 animate-slide-up">
             <div className="flex items-center justify-between border-b border-ev-border pb-4 mb-6">
               <h3 className="text-lg font-bold text-white">ส่งความคิดเห็นรถคันนี้ ({activeCar.trim})</h3>
               <button
@@ -587,7 +587,7 @@ const CarDetailFullClient: React.FC<CarDetailFullClientProps> = ({
                       placeholder="เช่น สมชาย ขับ EV"
                       value={userName}
                       onChange={(e) => setUserName(e.target.value)}
-                      className="w-full rounded-xl border border-ev-border bg-slate-900 px-4 py-2.5 text-sm text-white placeholder-slate-600 outline-none focus:border-slate-700 transition-colors"
+                      className="w-full rounded-sm border border-ev-border bg-ev-card/40 px-4 py-2.5 text-sm text-white placeholder-slate-600 outline-none focus:border-electric-green transition-colors"
                     />
                   </div>
                   
@@ -625,7 +625,7 @@ const CarDetailFullClient: React.FC<CarDetailFullClientProps> = ({
                       placeholder="เล่าถึงสิ่งที่คุณชอบในรถรุ่นนี้..."
                       value={pros}
                       onChange={(e) => setPros(e.target.value)}
-                      className="w-full rounded-xl border border-ev-border bg-slate-900 px-4 py-2.5 text-sm text-white placeholder-slate-600 outline-none focus:border-slate-700 transition-colors resize-none"
+                      className="w-full rounded-sm border border-ev-border bg-ev-card/40 px-4 py-2.5 text-sm text-white placeholder-slate-600 outline-none focus:border-electric-green transition-colors resize-none"
                     />
                   </div>
                   <div>
@@ -639,7 +639,7 @@ const CarDetailFullClient: React.FC<CarDetailFullClientProps> = ({
                       placeholder="ข้อคิดเห็นหรือปัญหาที่พบจากการใช้จริง..."
                       value={cons}
                       onChange={(e) => setCons(e.target.value)}
-                      className="w-full rounded-xl border border-ev-border bg-slate-900 px-4 py-2.5 text-sm text-white placeholder-slate-600 outline-none focus:border-slate-700 transition-colors resize-none"
+                      className="w-full rounded-sm border border-ev-border bg-ev-card/40 px-4 py-2.5 text-sm text-white placeholder-slate-600 outline-none focus:border-electric-green transition-colors resize-none"
                     />
                   </div>
                 </div>
@@ -652,7 +652,7 @@ const CarDetailFullClient: React.FC<CarDetailFullClientProps> = ({
                     placeholder="เขียนรีวิวโดยละเอียดของคุณ..."
                     value={comment}
                     onChange={(e) => setComment(e.target.value)}
-                    className="w-full rounded-xl border border-ev-border bg-slate-900 px-4 py-2.5 text-sm text-white placeholder-slate-600 outline-none focus:border-slate-700 transition-colors resize-none"
+                    className="w-full rounded-sm border border-ev-border bg-ev-card/40 px-4 py-2.5 text-sm text-white placeholder-slate-600 outline-none focus:border-electric-green transition-colors resize-none"
                   />
                 </div>
 
@@ -667,7 +667,7 @@ const CarDetailFullClient: React.FC<CarDetailFullClientProps> = ({
                   <button
                     type="submit"
                     disabled={isSubmitting}
-                    className="rounded-xl bg-gradient-to-r from-electric-green to-electric-blue px-6 py-2 text-xs font-bold text-ev-dark hover:opacity-90 transition-opacity disabled:opacity-50"
+                    className="rounded-xl bg-electric-green border border-ev-border px-6 py-2 text-xs font-bold text-ev-dark hover:bg-electric-green/90 transition-colors disabled:opacity-50"
                   >
                     {isSubmitting ? 'กำลังส่งรีวิว...' : 'บันทึกรีวิว'}
                   </button>
@@ -680,12 +680,12 @@ const CarDetailFullClient: React.FC<CarDetailFullClientProps> = ({
         {/* Reviews Feed */}
         <div className="space-y-6">
           {reviews.length === 0 ? (
-            <div className="text-center rounded-2xl border border-dashed border-ev-border py-10 text-slate-500 text-sm">
+            <div className="text-center rounded-xl border border-dashed border-ev-border py-10 text-slate-400 text-sm">
               ยังไม่มีความคิดเห็นสำหรับรถรุ่นนี้ เขียนเป็นคนแรกได้เลย!
             </div>
           ) : (
             reviews.map((rev) => (
-              <div key={rev._id} className="rounded-2xl border border-ev-border bg-ev-card/25 p-6 space-y-4 animate-fade-in">
+              <div key={rev._id} className="rounded-xl border border-ev-border bg-ev-card/25 p-6 space-y-4 animate-fade-in">
                 {/* Review Header */}
                 <div className="flex flex-col sm:flex-row justify-between sm:items-center gap-2 border-b border-ev-border/40 pb-3">
                   <div className="flex items-center space-x-3">
@@ -699,7 +699,7 @@ const CarDetailFullClient: React.FC<CarDetailFullClientProps> = ({
                           รุ่นย่อย: {getTrimLabel(rev.evId)}
                         </span>
                       </div>
-                      <span className="text-[10px] text-slate-500">
+                      <span className="text-[10px] text-slate-400">
                         {new Date(rev.createdAt).toLocaleDateString('th-TH', {
                           year: 'numeric',
                           month: 'short',

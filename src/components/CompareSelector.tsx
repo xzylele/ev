@@ -59,8 +59,8 @@ const CompareSelector = () => {
   if (!mounted || selectedCars.length === 0) return null;
 
   return (
-    <div className="fixed bottom-6 left-1/2 z-40 w-full max-w-4xl -translate-x-1/2 px-4 transition-all duration-500 animate-slide-up">
-      <div className="flex flex-col sm:flex-row items-center justify-between gap-4 rounded-2xl border border-electric-green/30 bg-ev-dark/95 p-4 shadow-2xl backdrop-blur-md glow-green">
+    <div className="fixed bottom-20 md:bottom-6 left-1/2 z-40 w-full max-w-4xl -translate-x-1/2 px-4 transition-all duration-500 animate-slide-up">
+      <div className="flex flex-col sm:flex-row items-center justify-between gap-4 rounded-xl border border-ev-border bg-ev-card/95 p-4 backdrop-blur-md">
         {/* Left: Selected cars list */}
         <div className="flex flex-wrap items-center gap-3">
           <div className="text-sm font-bold text-white flex items-center gap-2">
@@ -107,7 +107,7 @@ const CompareSelector = () => {
           
           <Link
             href="/compare"
-            className="flex items-center space-x-2 rounded-xl bg-gradient-to-r from-electric-green to-electric-blue px-4 py-2 text-xs font-bold text-ev-dark hover:opacity-90 transition-all duration-300"
+            className="flex items-center space-x-2 rounded-xl bg-electric-green px-4 py-2 text-xs font-bold text-ev-dark hover:bg-electric-green/90 transition-all duration-300"
           >
             <span>เริ่มเปรียบเทียบ</span>
             <ArrowLeftRight className="h-3.5 w-3.5" />
