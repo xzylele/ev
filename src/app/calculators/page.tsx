@@ -230,10 +230,10 @@ const CalculatorsContent = () => {
       )}
 
       {/* Tabs */}
-      <div className="flex border-b border-ev-border mb-8">
+      <div className="flex overflow-x-auto whitespace-nowrap no-scrollbar border-b border-ev-border mb-8">
         <button
           onClick={() => setActiveTab('cost')}
-          className={`flex items-center space-x-2 py-4 px-6 border-b-2 font-bold text-sm transition-all duration-300 ${
+          className={`flex items-center space-x-2 py-4 px-6 border-b-2 font-bold text-sm transition-all duration-300 shrink-0 ${
             activeTab === 'cost'
               ? 'border-electric-green text-electric-green'
               : 'border-transparent text-slate-400 hover:text-white'
@@ -245,7 +245,7 @@ const CalculatorsContent = () => {
         
         <button
           onClick={() => setActiveTab('time')}
-          className={`flex items-center space-x-2 py-4 px-6 border-b-2 font-bold text-sm transition-all duration-300 ${
+          className={`flex items-center space-x-2 py-4 px-6 border-b-2 font-bold text-sm transition-all duration-300 shrink-0 ${
             activeTab === 'time'
               ? 'border-electric-blue text-electric-blue'
               : 'border-transparent text-slate-400 hover:text-white'

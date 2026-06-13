@@ -52,7 +52,7 @@ const TableSkeleton = () => (
   <div className="w-full rounded-xl border border-ev-border bg-ev-card/10 overflow-hidden">
     {/* Header skeleton */}
     <div className="flex border-b border-ev-border">
-      <div className="w-48 shrink-0 bg-ev-dark/80 p-6">
+      <div className="w-32 sm:w-48 shrink-0 bg-ev-dark/80 p-3 sm:p-6">
         <div className="h-4 w-24 rounded bg-slate-800 animate-pulse" />
       </div>
       {[1, 2, 3].map(i => (
@@ -67,7 +67,7 @@ const TableSkeleton = () => (
     {/* Row skeletons */}
     {Array.from({ length: 12 }).map((_, i) => (
       <div key={i} className="flex border-b border-ev-border/40">
-        <div className="w-48 shrink-0 bg-ev-dark/80 px-6 py-4">
+        <div className="w-32 sm:w-48 shrink-0 bg-ev-dark/80 px-3 sm:px-6 py-4">
           <div className="h-3 w-32 rounded bg-slate-800 animate-pulse" />
         </div>
         {[1, 2, 3].map(j => (
@@ -274,11 +274,10 @@ const PopularMatchups = ({
         </h2>
         <span className="text-xs text-slate-500 font-medium">— รุ่นที่คล้ายกันต่างยี่ห้อ</span>
       </div>
-      <div className={`grid gap-3 ${
-        variant === 'full'
+      <div className={`grid gap-3 ${variant === 'full'
           ? 'grid-cols-1 sm:grid-cols-2 lg:grid-cols-3'
           : 'grid-cols-1 sm:grid-cols-2 lg:grid-cols-3'
-      }`}>
+        }`}>
         {matchups.slice(0, variant === 'full' ? 6 : 3).map((m, i) => (
           <MatchupCard key={`${m.cars[0]._id}-${m.cars[1]._id}-${i}`} matchup={m} onSelect={onSelect} />
         ))}
@@ -450,11 +449,11 @@ const ComparePageContent = () => {
     return (
       <tr
         className={`transition-colors duration-150 ${highlightDiffs && rowIsDifferent && selectedCars.length > 1
-            ? 'bg-ev-highlight/10 border-l-2 border-l-ev-highlight'
-            : 'border-b border-ev-border/40 hover:bg-ev-card/40'
+          ? 'bg-ev-highlight/10 border-l-2 border-l-ev-highlight'
+          : 'hover:bg-ev-card/40'
           }`}
       >
-        <td className="px-6 py-3.5 text-xs font-bold text-slate-400 whitespace-nowrap bg-ev-dark/90 sticky left-0 z-10 w-48 border-r border-ev-border/30">
+        <td className="px-3 sm:px-6 py-3.5 text-xs font-bold text-slate-400 whitespace-nowrap bg-ev-dark sticky left-0 z-10 w-32 sm:w-48 border-r border-b border-ev-border/30">
           {label}
         </td>
         {selectedCars.map((car) => {
@@ -465,7 +464,7 @@ const ComparePageContent = () => {
             return (
               <td
                 key={car._id}
-                className="px-6 py-3.5 text-center whitespace-nowrap min-w-[200px]"
+                className="px-6 py-3.5 text-center whitespace-nowrap min-w-[200px] border-b border-ev-border/40"
               >
                 <BooleanValue value={!!val} />
               </td>
@@ -475,9 +474,9 @@ const ComparePageContent = () => {
           return (
             <td
               key={car._id}
-              className={`px-6 py-3.5 text-sm font-semibold text-center whitespace-nowrap min-w-[200px] ${isOptimal
-                  ? 'text-electric-green font-extrabold bg-electric-green/10'
-                  : 'text-white'
+              className={`px-6 py-3.5 text-sm font-semibold text-center whitespace-nowrap min-w-[200px] border-b border-ev-border/40 ${isOptimal
+                ? 'text-electric-green font-extrabold bg-electric-green/10'
+                : 'text-white'
                 }`}
             >
               {formatter ? formatter(val) : String(val)}
@@ -486,7 +485,7 @@ const ComparePageContent = () => {
         })}
         {/* Fill empty slots */}
         {Array.from({ length: Math.max(0, 4 - selectedCars.length) }).map((_, i) => (
-          <td key={`empty-${i}`} className="px-6 py-3.5 text-slate-700 text-center">-</td>
+          <td key={`empty-${i}`} className="px-6 py-3.5 text-slate-700 text-center border-b border-ev-border/40">-</td>
         ))}
       </tr>
     );
@@ -497,7 +496,7 @@ const ComparePageContent = () => {
     <tr className="bg-ev-card/60">
       <td
         colSpan={5}
-        className="px-6 py-3 text-xs font-extrabold uppercase tracking-widest sticky left-0"
+        className="px-6 py-3 text-xs font-extrabold uppercase tracking-widest sticky left-0 bg-ev-card"
         style={{ color: accentColor, borderBottom: `1px solid ${accentColor}33` }}
       >
         {label}
@@ -540,8 +539,8 @@ const ComparePageContent = () => {
             <button
               onClick={() => setHighlightDiffs(!highlightDiffs)}
               className={`flex items-center space-x-1.5 px-4 py-2 rounded-lg text-xs font-bold transition-all duration-150 border ${highlightDiffs
-                  ? 'bg-ev-highlight/10 border-ev-highlight text-ev-highlight'
-                  : 'border-ev-border text-slate-400 hover:text-white hover:border-slate-500'
+                ? 'bg-ev-highlight/10 border-ev-highlight text-ev-highlight'
+                : 'border-ev-border text-slate-400 hover:text-white hover:border-slate-500'
                 }`}
             >
               <Sparkles className="h-4 w-4" />
@@ -551,8 +550,8 @@ const ComparePageContent = () => {
             <button
               onClick={() => setHideIdentical(!hideIdentical)}
               className={`flex items-center space-x-1.5 px-4 py-2 rounded-lg text-xs font-bold transition-all duration-150 border ${hideIdentical
-                  ? 'bg-electric-blue/10 border-electric-blue text-electric-blue'
-                  : 'border-ev-border text-slate-400 hover:text-white hover:border-slate-500'
+                ? 'bg-electric-blue/10 border-electric-blue text-electric-blue'
+                : 'border-ev-border text-slate-400 hover:text-white hover:border-slate-500'
                 }`}
             >
               <EyeOff className="h-4 w-4" />
@@ -567,291 +566,290 @@ const ComparePageContent = () => {
       ) : selectedCars.length === 0 ? (
         /* ─── Empty state ─── */
         <>
-        <div className="flex flex-col items-center justify-center rounded-xl border border-dashed border-ev-border py-16 text-center max-w-lg mx-auto">
-          <div className="h-14 w-14 rounded-xl border border-ev-border bg-ev-card flex items-center justify-center mb-5">
-            <ArrowLeftRight className="h-7 w-7 text-slate-500" />
-          </div>
-          <h2 className="text-lg font-bold text-white">ยังไม่ได้เลือกคู่เปรียบเทียบ</h2>
-          <p className="text-sm text-slate-400 mt-2 max-w-sm px-4 leading-relaxed">
-            เลือกรถยนต์ไฟฟ้า 2–4 รุ่น เพื่อเปรียบเทียบสเปคแบบเคียงข้าง
-          </p>
+          <div className="flex flex-col items-center justify-center rounded-xl border border-dashed border-ev-border py-16 text-center max-w-lg mx-auto">
+            <div className="h-14 w-14 rounded-xl border border-ev-border bg-ev-card flex items-center justify-center mb-5">
+              <ArrowLeftRight className="h-7 w-7 text-slate-500" />
+            </div>
+            <h2 className="text-lg font-bold text-white">ยังไม่ได้เลือกคู่เปรียบเทียบ</h2>
+            <p className="text-sm text-slate-400 mt-2 max-w-sm px-4 leading-relaxed">
+              เลือกรถยนต์ไฟฟ้า 2–4 รุ่น เพื่อเปรียบเทียบสเปคแบบเคียงข้าง
+            </p>
 
-          {/* Steps */}
-          <div className="mt-6 w-full max-w-xs px-4 space-y-3 text-left">
-            <div className="flex items-start gap-3">
-              <span className="shrink-0 h-6 w-6 rounded-md bg-ev-card border border-ev-border text-[11px] font-bold text-slate-300 flex items-center justify-center">1</span>
-              <p className="text-xs text-slate-400 pt-0.5">ค้นหารถยนต์ไฟฟ้าที่สนใจในช่องด้านล่าง</p>
-            </div>
-            <div className="flex items-start gap-3">
-              <span className="shrink-0 h-6 w-6 rounded-md bg-ev-card border border-ev-border text-[11px] font-bold text-slate-300 flex items-center justify-center">2</span>
-              <p className="text-xs text-slate-400 pt-0.5">เลือกรุ่นเพิ่มเติมเพื่อเปรียบเทียบข้อมูล</p>
-            </div>
-            <div className="flex items-start gap-3">
-              <span className="shrink-0 h-6 w-6 rounded-md bg-ev-card border border-ev-border text-[11px] font-bold text-slate-300 flex items-center justify-center">3</span>
-              <p className="text-xs text-slate-400 pt-0.5">ใช้เครื่องมือไฮไลท์จุดต่างเพื่อวิเคราะห์ผล</p>
-            </div>
-          </div>
-
-          {/* Search input */}
-          <div className="mt-6 w-full max-w-xs relative px-4">
-            <div className="relative">
-              <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-3.5 w-3.5 text-slate-500" />
-              <input
-                type="text"
-                placeholder="พิมพ์ค้นหารถเพื่อเริ่มเปรียบเทียบ..."
-                value={slotSearchQuery}
-                onChange={(e) => setSlotSearchQuery(e.target.value)}
-                className="w-full rounded-md border border-ev-border bg-ev-card px-4 pl-9 py-2.5 text-xs text-white placeholder-slate-600 outline-none focus:border-electric-green/60 transition-colors duration-150"
-              />
-            </div>
-            {slotSearchQuery && (
-              <div className="absolute left-4 right-4 z-20 mt-1 max-h-48 overflow-y-auto rounded-lg border border-ev-border bg-ev-dark">
-                {filteredDropdownOptions.length === 0 ? (
-                  <div className="p-3 text-center text-slate-500 text-xs">ไม่พบรถที่ค้นหา</div>
-                ) : (
-                  filteredDropdownOptions.map(car => (
-                    <button
-                      key={car._id}
-                      onClick={() => handleAddCarToCompare(car)}
-                      className="w-full px-4 py-2.5 text-left text-xs font-semibold text-slate-300 hover:bg-ev-card hover:text-white border-b border-ev-border/30 last:border-b-0 flex items-center space-x-2 transition-colors duration-150"
-                    >
-                      {/* eslint-disable-next-line @next/next/no-img-element */}
-                      <img src={car.image} alt={car.model} className="h-6 w-8 rounded object-cover" />
-                      <span>{car.brand} {car.model} ({car.trim})</span>
-                    </button>
-                  ))
-                )}
+            {/* Steps */}
+            <div className="mt-6 w-full max-w-xs px-4 space-y-3 text-left">
+              <div className="flex items-start gap-3">
+                <span className="shrink-0 h-6 w-6 rounded-md bg-ev-card border border-ev-border text-[11px] font-bold text-slate-300 flex items-center justify-center">1</span>
+                <p className="text-xs text-slate-400 pt-0.5">ค้นหารถยนต์ไฟฟ้าที่สนใจในช่องด้านล่าง</p>
               </div>
-            )}
-          </div>
-          <Link
-            href="/cars"
-            className="mt-4 text-xs font-bold text-electric-green hover:underline"
-          >
-            ไปที่หน้าค้นหารถ
-          </Link>
-        </div>
+              <div className="flex items-start gap-3">
+                <span className="shrink-0 h-6 w-6 rounded-md bg-ev-card border border-ev-border text-[11px] font-bold text-slate-300 flex items-center justify-center">2</span>
+                <p className="text-xs text-slate-400 pt-0.5">เลือกรุ่นเพิ่มเติมเพื่อเปรียบเทียบข้อมูล</p>
+              </div>
+              <div className="flex items-start gap-3">
+                <span className="shrink-0 h-6 w-6 rounded-md bg-ev-card border border-ev-border text-[11px] font-bold text-slate-300 flex items-center justify-center">3</span>
+                <p className="text-xs text-slate-400 pt-0.5">ใช้เครื่องมือไฮไลท์จุดต่างเพื่อวิเคราะห์ผล</p>
+              </div>
+            </div>
 
-        {/* Popular matchups in empty state */}
-        {popularMatchups.length > 0 && (
-          <div className="mt-10 w-full">
-            <PopularMatchups matchups={popularMatchups} onSelect={handleMatchupSelect} variant="full" />
+            {/* Search input */}
+            <div className="mt-6 w-full max-w-xs relative px-4">
+              <div className="relative">
+                <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-3.5 w-3.5 text-slate-500" />
+                <input
+                  type="text"
+                  placeholder="พิมพ์ค้นหารถเพื่อเริ่มเปรียบเทียบ..."
+                  value={slotSearchQuery}
+                  onChange={(e) => setSlotSearchQuery(e.target.value)}
+                  className="w-full rounded-md border border-ev-border bg-ev-card px-4 pl-9 py-2.5 text-xs text-white placeholder-slate-600 outline-none focus:border-electric-green/60 transition-colors duration-150"
+                />
+              </div>
+              {slotSearchQuery && (
+                <div className="absolute left-4 right-4 z-20 mt-1 max-h-48 overflow-y-auto rounded-lg border border-ev-border bg-ev-dark">
+                  {filteredDropdownOptions.length === 0 ? (
+                    <div className="p-3 text-center text-slate-500 text-xs">ไม่พบรถที่ค้นหา</div>
+                  ) : (
+                    filteredDropdownOptions.map(car => (
+                      <button
+                        key={car._id}
+                        onClick={() => handleAddCarToCompare(car)}
+                        className="w-full px-4 py-2.5 text-left text-xs font-semibold text-slate-300 hover:bg-ev-card hover:text-white border-b border-ev-border/30 last:border-b-0 flex items-center space-x-2 transition-colors duration-150"
+                      >
+                        {/* eslint-disable-next-line @next/next/no-img-element */}
+                        <img src={car.image} alt={car.model} className="h-6 w-8 rounded object-cover" />
+                        <span>{car.brand} {car.model} ({car.trim})</span>
+                      </button>
+                    ))
+                  )}
+                </div>
+              )}
+            </div>
+            <Link
+              href="/cars"
+              className="mt-4 text-xs font-bold text-electric-green hover:underline"
+            >
+              ไปที่หน้าค้นหารถ
+            </Link>
           </div>
-        )}
+
+          {/* Popular matchups in empty state */}
+          {popularMatchups.length > 0 && (
+            <div className="mt-10 w-full">
+              <PopularMatchups matchups={popularMatchups} onSelect={handleMatchupSelect} variant="full" />
+            </div>
+          )}
         </>
       ) : (
         /* ─── Comparison table ─── */
         <>
-        <div className="w-full overflow-x-auto rounded-xl border border-ev-border bg-ev-card/10 no-scrollbar relative">
-          <table className="w-full border-collapse">
-            {/* Sticky thead: Car images & names */}
-            <thead className="sticky top-0 z-30 bg-ev-dark">
-              <tr className="border-b border-ev-border">
-                <th className="px-6 py-5 text-left bg-ev-dark sticky left-0 z-40 w-48 border-r border-ev-border/30">
-                  <span className="text-xs font-extrabold uppercase text-slate-400 tracking-wider">เปรียบเทียบสเปค</span>
-                </th>
-                {selectedCars.map((car) => (
-                  <th key={car._id} className="px-6 py-5 text-center align-top min-w-[220px] bg-ev-dark">
-                    <div className="relative flex flex-col items-center">
-                      {/* Remove Button */}
-                      <button
-                        onClick={() => handleRemoveColumn(car._id)}
-                        className="absolute -top-2 right-0 rounded-md bg-ev-card border border-ev-border p-1 text-slate-400 hover:text-red-400 hover:border-red-400/40 transition-colors duration-150"
-                        title="ลบออก"
-                      >
-                        <X className="h-3.5 w-3.5" />
-                      </button>
-
-                      {/* Image */}
-                      {/* eslint-disable-next-line @next/next/no-img-element */}
-                      <img
-                        src={car.image}
-                        alt={car.model}
-                        className="h-24 w-32 rounded-lg object-cover border border-ev-border"
-                      />
-
-                      {/* Info */}
-                      <span className="text-[10px] font-bold text-slate-500 uppercase tracking-widest mt-3">{car.brand}</span>
-                      <h3 className="text-sm font-bold text-white mt-0.5 leading-tight">{car.model}</h3>
-                      <p className="text-xs text-electric-green font-semibold mt-0.5">{car.trim}</p>
-
-                      {/* Price — promoted to header */}
-                      <p className="mt-2 text-base font-extrabold text-white tabular-nums">
-                        {new Intl.NumberFormat('th-TH').format(car.price)}
-                        <span className="text-xs text-slate-400 font-semibold ml-1">฿</span>
-                      </p>
-
-                      {/* Sibling Trims Dropdown Selector */}
-                      {(() => {
-                        const siblingTrims = allCars.filter(c => c.brand === car.brand && c.model === car.model);
-                        if (siblingTrims.length <= 1) return null;
-                        return (
-                          <select
-                            value={car._id}
-                            onChange={(e) => {
-                              const newCarId = e.target.value;
-                              const newCar = siblingTrims.find(c => c._id === newCarId);
-                              if (newCar) {
-                                const index = selectedCars.findIndex(c => c._id === car._id);
-                                if (index !== -1) {
-                                  const updated = [...selectedCars];
-                                  updated[index] = newCar;
-                                  updateCompareSelection(updated);
-                                }
-                              }
-                            }}
-                            className="mt-2 text-[10px] font-bold bg-ev-card border border-ev-border text-slate-200 rounded-md px-2 py-1.5 outline-none focus:border-electric-green/60 cursor-pointer max-w-[180px] truncate transition-colors duration-150"
-                          >
-                            {siblingTrims.map(t => (
-                              <option key={t._id} value={t._id} className="bg-ev-dark text-white text-xs">
-                                {t.trim} ({new Intl.NumberFormat('th-TH').format(t.price)} ฿)
-                              </option>
-                            ))}
-                          </select>
-                        );
-                      })()}
-
-                      <Link
-                        href={`/cars/${car._id}`}
-                        className="mt-2 text-[10px] font-bold text-electric-blue hover:underline"
-                      >
-                        ดูหน้ารายละเอียดหลัก
-                      </Link>
-                    </div>
+          <div className="w-full overflow-x-auto rounded-xl border border-ev-border bg-ev-card/10 no-scrollbar relative">
+            <table className="w-full border-separate border-spacing-0">
+              {/* Sticky thead: Car images & names */}
+              <thead className="sticky top-0 z-30 bg-ev-dark">
+                <tr>
+                  <th className="px-3 sm:px-6 py-5 text-left bg-ev-dark sticky left-0 z-40 w-32 sm:w-48 border-r border-b border-ev-border/30">
+                    <span className="text-xs font-extrabold uppercase text-slate-400 tracking-wider">เปรียบเทียบสเปค</span>
                   </th>
-                ))}
+                  {selectedCars.map((car) => (
+                    <th key={car._id} className="px-6 py-5 text-center align-top min-w-[220px] bg-ev-dark border-b border-ev-border/30">
+                      <div className="relative flex flex-col items-center">
+                        {/* Remove Button */}
+                        <button
+                          onClick={() => handleRemoveColumn(car._id)}
+                          className="absolute -top-2 right-0 rounded-md bg-ev-card border border-ev-border p-1 text-slate-400 hover:text-red-400 hover:border-red-400/40 transition-colors duration-150"
+                          title="ลบออก"
+                        >
+                          <X className="h-3.5 w-3.5" />
+                        </button>
 
-                {/* Empty add-car slots */}
-                {Array.from({ length: 4 - selectedCars.length }).map((_, idx) => {
-                  const slotIndex = selectedCars.length + idx;
-                  const isSearching = activeSearchSlot === slotIndex;
-                  return (
-                    <th key={`empty-header-${idx}`} className="px-6 py-5 text-center align-middle min-w-[220px] bg-ev-dark">
-                      <div className="relative border border-dashed border-ev-border/60 hover:border-slate-500 rounded-xl p-6 transition-colors duration-150 flex flex-col items-center justify-center min-h-[160px]">
-                        {!isSearching ? (
-                          <button
-                            onClick={() => {
-                              setActiveSearchSlot(slotIndex);
-                              setSlotSearchQuery('');
-                            }}
-                            className="flex flex-col items-center gap-2 text-slate-500 hover:text-white transition-colors duration-150"
-                          >
-                            <Plus className="h-8 w-8 rounded-lg border border-dashed border-ev-border p-1.5" />
-                            <span className="text-[11px] font-bold">เพิ่มรุ่นเปรียบเทียบ</span>
-                          </button>
-                        ) : (
-                          <div className="w-full space-y-3 relative">
-                            <div className="relative">
-                              <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-3.5 w-3.5 text-slate-500" />
-                              <input
-                                type="text"
-                                autoFocus
-                                placeholder="ค้นหารถยนต์..."
-                                value={slotSearchQuery}
-                                onChange={(e) => setSlotSearchQuery(e.target.value)}
-                                className="w-full rounded-md border border-ev-border bg-ev-card px-3 pl-9 py-2 text-xs text-white placeholder-slate-600 outline-none focus:border-electric-green/60 transition-colors duration-150"
-                              />
-                            </div>
+                        {/* Image */}
+                        {/* eslint-disable-next-line @next/next/no-img-element */}
+                        <img
+                          src={car.image}
+                          alt={car.model}
+                          className="h-24 w-32 rounded-lg object-cover border border-ev-border"
+                        />
 
-                            <div className="absolute left-0 right-0 z-50 mt-1 max-h-48 overflow-y-auto rounded-lg border border-ev-border bg-ev-dark">
-                              {filteredDropdownOptions.length === 0 ? (
-                                <div className="p-3 text-center text-slate-500 text-xs">ไม่พบรถที่ค้นหา</div>
-                              ) : (
-                                filteredDropdownOptions.map(car => (
-                                  <button
-                                    key={car._id}
-                                    onClick={() => handleAddCarToCompare(car)}
-                                    className="w-full px-3 py-2 text-left text-xs font-semibold text-slate-300 hover:bg-ev-card hover:text-white border-b border-ev-border/30 last:border-b-0 flex items-center space-x-2 transition-colors duration-150"
-                                  >
-                                    {/* eslint-disable-next-line @next/next/no-img-element */}
-                                    <img src={car.image} alt={car.model} className="h-5 w-7 rounded object-cover" />
-                                    <span className="truncate">{car.brand} {car.model}</span>
-                                  </button>
-                                ))
-                              )}
-                            </div>
+                        {/* Info */}
+                        <span className="text-[10px] font-bold text-slate-500 uppercase tracking-widest mt-3">{car.brand}</span>
+                        <h3 className="text-sm font-bold text-white mt-0.5 leading-tight">{car.model}</h3>
+                        <p className="text-xs text-electric-green font-semibold mt-0.5">{car.trim}</p>
 
-                            <button
-                              onClick={() => setActiveSearchSlot(null)}
-                              className="text-[10px] text-slate-500 hover:text-white underline block mx-auto pt-1 transition-colors duration-150"
+                        {/* Price — promoted to header */}
+                        <p className="mt-2 text-base font-extrabold text-white tabular-nums">
+                          {new Intl.NumberFormat('th-TH').format(car.price)}
+                          <span className="text-xs text-slate-400 font-semibold ml-1">฿</span>
+                        </p>
+
+                        {/* Sibling Trims Dropdown Selector */}
+                        {(() => {
+                          const siblingTrims = allCars.filter(c => c.brand === car.brand && c.model === car.model);
+                          if (siblingTrims.length <= 1) return null;
+                          return (
+                            <select
+                              value={car._id}
+                              onChange={(e) => {
+                                const newCarId = e.target.value;
+                                const newCar = siblingTrims.find(c => c._id === newCarId);
+                                if (newCar) {
+                                  const index = selectedCars.findIndex(c => c._id === car._id);
+                                  if (index !== -1) {
+                                    const updated = [...selectedCars];
+                                    updated[index] = newCar;
+                                    updateCompareSelection(updated);
+                                  }
+                                }
+                              }}
+                              className="mt-2 text-[10px] font-bold bg-ev-card border border-ev-border text-slate-200 rounded-md px-2 py-1.5 outline-none focus:border-electric-green/60 cursor-pointer max-w-[180px] truncate transition-colors duration-150"
                             >
-                              ยกเลิก
-                            </button>
-                          </div>
-                        )}
+                              {siblingTrims.map(t => (
+                                <option key={t._id} value={t._id} className="bg-ev-dark text-white text-xs">
+                                  {t.trim} ({new Intl.NumberFormat('th-TH').format(t.price)} ฿)
+                                </option>
+                              ))}
+                            </select>
+                          );
+                        })()}
+
+                        <Link
+                          href={`/cars/${car._id}`}
+                          className="mt-2 text-[10px] font-bold text-electric-blue hover:underline"
+                        >
+                          ดูหน้ารายละเอียดหลัก
+                        </Link>
                       </div>
                     </th>
-                  );
-                })}
-              </tr>
-            </thead>
+                  ))}
 
-            {/* Table Body Groups */}
-            <tbody>
-              {/* === BASIC INFO === */}
-              {renderSectionHeader('ข้อมูลพื้นฐาน (Basic Information)', '#0ea5e9')}
-              {renderSpecRow('ประเภทตัวถัง', (car) => car.bodyType)}
-              {renderSpecRow('ระยะเวลาการรับประกันแบตเตอรี่', (car) => car.warrantyYears, (val) => `${val} ปี`, 'higher')}
-              {renderSpecRow('ระยะทางรับประกัน (กม.)', (car) => car.warrantyKm, (val) => `${new Intl.NumberFormat('th-TH').format(val)} กม.`, 'higher')}
+                  {/* Empty add-car slots */}
+                  {Array.from({ length: 4 - selectedCars.length }).map((_, idx) => {
+                    const slotIndex = selectedCars.length + idx;
+                    const isSearching = activeSearchSlot === slotIndex;
+                    return (
+                      <th key={`empty-header-${idx}`} className="px-6 py-5 text-center align-middle min-w-[220px] bg-ev-dark border-b border-ev-border/30">
+                        <div className="relative border border-dashed border-ev-border/60 hover:border-slate-500 rounded-xl p-6 transition-colors duration-150 flex flex-col items-center justify-center min-h-[160px]">
+                          {!isSearching ? (
+                            <button
+                              onClick={() => {
+                                setActiveSearchSlot(slotIndex);
+                                setSlotSearchQuery('');
+                              }}
+                              className="flex flex-col items-center gap-2 text-slate-500 hover:text-white transition-colors duration-150"
+                            >
+                              <Plus className="h-8 w-8 rounded-lg border border-dashed border-ev-border p-1.5" />
+                              <span className="text-[11px] font-bold">เพิ่มรุ่นเปรียบเทียบ</span>
+                            </button>
+                          ) : (
+                            <div className="w-full space-y-3 relative">
+                              <div className="relative">
+                                <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-3.5 w-3.5 text-slate-500" />
+                                <input
+                                  type="text"
+                                  autoFocus
+                                  placeholder="ค้นหารถยนต์..."
+                                  value={slotSearchQuery}
+                                  onChange={(e) => setSlotSearchQuery(e.target.value)}
+                                  className="w-full rounded-md border border-ev-border bg-ev-card px-3 pl-9 py-2 text-xs text-white placeholder-slate-600 outline-none focus:border-electric-green/60 transition-colors duration-150"
+                                />
+                              </div>
 
-              {/* === PERFORMANCE === */}
-              {renderSectionHeader('สมรรถนะตัวรถ (Performance)', '#05f383')}
-              {renderSpecRow('กำลังมอเตอร์ไฟฟ้า (แรงม้า)', (car) => car.horsepower, (val) => `${val} HP`, 'higher')}
-              {renderSpecRow('แรงบิดสูงสุด (นิวตันเมตร)', (car) => car.torque, (val) => `${val} Nm`, 'higher')}
-              {renderSpecRow('อัตราเร่ง 0-100 กม./ชม.', (car) => car.acceleration0To100, (val) => `${val} วินาที`, 'lower')}
-              {renderSpecRow('ความเร็วสูงสุด (กม./ชม.)', (car) => car.topSpeed, (val) => `${val} km/h`, 'higher')}
-              {renderSpecRow('ระบบขับเคลื่อน', (car) => car.driveType)}
+                              <div className="absolute left-0 right-0 z-50 mt-1 max-h-48 overflow-y-auto rounded-lg border border-ev-border bg-ev-dark">
+                                {filteredDropdownOptions.length === 0 ? (
+                                  <div className="p-3 text-center text-slate-500 text-xs">ไม่พบรถที่ค้นหา</div>
+                                ) : (
+                                  filteredDropdownOptions.map(car => (
+                                    <button
+                                      key={car._id}
+                                      onClick={() => handleAddCarToCompare(car)}
+                                      className="w-full px-3 py-2 text-left text-xs font-semibold text-slate-300 hover:bg-ev-card hover:text-white border-b border-ev-border/30 last:border-b-0 flex items-center space-x-2 transition-colors duration-150"
+                                    >
+                                      {/* eslint-disable-next-line @next/next/no-img-element */}
+                                      <img src={car.image} alt={car.model} className="h-5 w-7 rounded object-cover" />
+                                      <span className="truncate">{car.brand} {car.model}</span>
+                                    </button>
+                                  ))
+                                )}
+                              </div>
 
-              {/* === BATTERY & RANGE === */}
-              {renderSectionHeader('แบตเตอรี่ & ระยะการเดินทาง (Battery & Range)', '#f59e0b')}
-              {renderSpecRow('ความจุแบตเตอรี่ (kWh)', (car) => car.batteryCapacity, (val) => `${val} kWh`, 'higher')}
-              {renderSpecRow('ชนิดของแบตเตอรี่', (car) => car.batteryType)}
-              {renderSpecRow('ระยะทางวิ่ง WLTP (กม.)', (car) => car.rangeWLTP, (val) => val > 0 ? `${val} กม.` : '-', 'higher')}
-              {renderSpecRow('ระยะทางวิ่ง NEDC (กม.)', (car) => car.rangeNEDC, (val) => val > 0 ? `${val} กม.` : '-', 'higher')}
-              {renderSpecRow('ระยะทางวิ่ง CLTC (กม.)', (car) => car.rangeCLTC, (val) => val > 0 ? `${val} กม.` : '-', 'higher')}
+                              <button
+                                onClick={() => setActiveSearchSlot(null)}
+                                className="text-[10px] text-slate-500 hover:text-white underline block mx-auto pt-1 transition-colors duration-150"
+                              >
+                                ยกเลิก
+                              </button>
+                            </div>
+                          )}
+                        </div>
+                      </th>
+                    );
+                  })}
+                </tr>
+              </thead>
 
-              {/* === CHARGING & TECH === */}
-              {renderSectionHeader('ระบบชาร์จไฟฟ้า & เทคโนโลยี (Charging & Technology)', '#a855f7')}
-              {renderSpecRow('การชาร์จกระแสสลับ AC สูงสุด', (car) => car.acChargePower, (val) => `${val} kW`, 'higher')}
-              {renderSpecRow('การชาร์จกระแสตรง DC สูงสุด', (car) => car.dcChargePower, (val) => `${val} kW`, 'higher')}
-              {renderSpecRow('สถาปัตยกรรมแรงดันระบบ', (car) => car.voltageArchitecture)}
-              {renderSpecRow('จ่ายกระแสไฟภายนอก (V2L)', (car) => car.v2lSupport, undefined, undefined, true)}
-              {renderSpecRow('กำลังจ่ายไฟ V2L สูงสุด', (car) => car.v2lPower, (val) => val > 0 ? `${val} kW` : '-', 'higher')}
+              {/* Table Body Groups */}
+              <tbody>
+                {/* === BASIC INFO === */}
+                {renderSectionHeader('ข้อมูลพื้นฐาน (Basic Information)', '#0ea5e9')}
+                {renderSpecRow('ประเภทตัวถัง', (car) => car.bodyType)}
+                {renderSpecRow('ระยะเวลาการรับประกันแบตเตอรี่', (car) => car.warrantyYears, (val) => `${val} ปี`, 'higher')}
+                {renderSpecRow('ระยะทางรับประกัน (กม.)', (car) => car.warrantyKm, (val) => `${new Intl.NumberFormat('th-TH').format(val)} กม.`, 'higher')}
 
-              {/* === DIMENSIONS === */}
-              {renderSectionHeader('สัดส่วนและมิติตัวถัง (Body Dimensions)', '#ec4899')}
-              {renderSpecRow('ความยาวตัวรถ (มม.)', (car) => car.length, (val) => `${new Intl.NumberFormat('th-TH').format(val)} มม.`)}
-              {renderSpecRow('ความกว้างตัวรถ (มม.)', (car) => car.width, (val) => `${new Intl.NumberFormat('th-TH').format(val)} มม.`)}
-              {renderSpecRow('ความสูงตัวรถ (มม.)', (car) => car.height, (val) => `${new Intl.NumberFormat('th-TH').format(val)} มม.`)}
-              {renderSpecRow('ระยะความยาวฐานล้อ (มม.)', (car) => car.wheelbase, (val) => `${new Intl.NumberFormat('th-TH').format(val)} มม.`)}
-              {renderSpecRow('ความจุห้องสัมภาระท้าย (ลิตร)', (car) => car.cargoVolume, (val) => `${val} ลิตร`, 'higher')}
-              {renderSpecRow('ที่เก็บของด้านหน้า Frunk (ลิตร)', (car) => car.frunkVolume, (val) => val > 0 ? `${val} ลิตร` : 'ไม่มี', 'higher')}
+                {/* === PERFORMANCE === */}
+                {renderSectionHeader('สมรรถนะตัวรถ (Performance)', '#05f383')}
+                {renderSpecRow('กำลังมอเตอร์ไฟฟ้า (แรงม้า)', (car) => car.horsepower, (val) => `${val} HP`, 'higher')}
+                {renderSpecRow('แรงบิดสูงสุด (นิวตันเมตร)', (car) => car.torque, (val) => `${val} Nm`, 'higher')}
+                {renderSpecRow('อัตราเร่ง 0-100 กม./ชม.', (car) => car.acceleration0To100, (val) => `${val} วินาที`, 'lower')}
+                {renderSpecRow('ความเร็วสูงสุด (กม./ชม.)', (car) => car.topSpeed, (val) => `${val} km/h`, 'higher')}
+                {renderSpecRow('ระบบขับเคลื่อน', (car) => car.driveType)}
 
-              {/* === ADAS === */}
-              {renderSectionHeader('ระบบช่วยขับขี่อัจฉริยะ (ADAS)', '#06b6d4')}
-              {renderSpecRow('ระดับระบบ ADAS', (car) => car.adasLevel ?? 0, (val) => {
-                const labels: Record<number, string> = { 0: 'ไม่มี', 1: 'Level 1 (พื้นฐาน)', 2: 'Level 2 (โหมดกึ่งอัตโนมัติ)', 3: 'Level 2+ (สูงกว่า)' };
-                return labels[val] || `Level ${val}`;
-              }, 'higher')}
-              {renderSpecRow('Adaptive Cruise Control (ACC)', (car) => car.adaptiveCruiseControl ?? false, undefined, undefined, true)}
-              {renderSpecRow('Lane Keeping Assist (LKA)', (car) => car.laneKeepAssist ?? false, undefined, undefined, true)}
-              {renderSpecRow('Auto Emergency Braking (AEB)', (car) => car.autoEmergencyBraking ?? false, undefined, undefined, true)}
-              {renderSpecRow('Blind Spot Monitor (BSM)', (car) => car.blindSpotMonitor ?? false, undefined, undefined, true)}
-              {renderSpecRow('จอดรถอัตโนมัติ (Auto Parking)', (car) => car.autoParking ?? false, undefined, undefined, true)}
-              {renderSpecRow('ฟีเจอร์ ADAS เพิ่มเติม', (car) => car.adasFeatures || '', (val) => val || '—')}
-            </tbody>
-          </table>
-        </div>
+                {/* === BATTERY & RANGE === */}
+                {renderSectionHeader('แบตเตอรี่ & ระยะการเดินทาง (Battery & Range)', '#f59e0b')}
+                {renderSpecRow('ความจุแบตเตอรี่ (kWh)', (car) => car.batteryCapacity, (val) => `${val} kWh`, 'higher')}
+                {renderSpecRow('ชนิดของแบตเตอรี่', (car) => car.batteryType)}
+                {renderSpecRow('ระยะทางวิ่ง WLTP (กม.)', (car) => car.rangeWLTP, (val) => val > 0 ? `${val} กม.` : '-', 'higher')}
+                {renderSpecRow('ระยะทางวิ่ง NEDC (กม.)', (car) => car.rangeNEDC, (val) => val > 0 ? `${val} กม.` : '-', 'higher')}
+                {renderSpecRow('ระยะทางวิ่ง CLTC (กม.)', (car) => car.rangeCLTC, (val) => val > 0 ? `${val} กม.` : '-', 'higher')}
 
-        {/* Popular matchups below table */}
-        {popularMatchups.length > 0 && (
-          <PopularMatchups matchups={popularMatchups} onSelect={handleMatchupSelect} variant="compact" />
-        )}
+                {/* === CHARGING & TECH === */}
+                {renderSectionHeader('ระบบชาร์จไฟฟ้า & เทคโนโลยี (Charging & Technology)', '#a855f7')}
+                {renderSpecRow('การชาร์จกระแสสลับ AC สูงสุด', (car) => car.acChargePower, (val) => `${val} kW`, 'higher')}
+                {renderSpecRow('การชาร์จกระแสตรง DC สูงสุด', (car) => car.dcChargePower, (val) => `${val} kW`, 'higher')}
+                {renderSpecRow('สถาปัตยกรรมแรงดันระบบ', (car) => car.voltageArchitecture)}
+                {renderSpecRow('จ่ายกระแสไฟภายนอก (V2L)', (car) => car.v2lSupport, undefined, undefined, true)}
+                {renderSpecRow('กำลังจ่ายไฟ V2L สูงสุด', (car) => car.v2lPower, (val) => val > 0 ? `${val} kW` : '-', 'higher')}
+
+                {/* === DIMENSIONS === */}
+                {renderSectionHeader('สัดส่วนและมิติตัวถัง (Body Dimensions)', '#ec4899')}
+                {renderSpecRow('ความยาวตัวรถ (มม.)', (car) => car.length, (val) => `${new Intl.NumberFormat('th-TH').format(val)} มม.`)}
+                {renderSpecRow('ความกว้างตัวรถ (มม.)', (car) => car.width, (val) => `${new Intl.NumberFormat('th-TH').format(val)} มม.`)}
+                {renderSpecRow('ความสูงตัวรถ (มม.)', (car) => car.height, (val) => `${new Intl.NumberFormat('th-TH').format(val)} มม.`)}
+                {renderSpecRow('ระยะความยาวฐานล้อ (มม.)', (car) => car.wheelbase, (val) => `${new Intl.NumberFormat('th-TH').format(val)} มม.`)}
+                {renderSpecRow('ความจุห้องสัมภาระท้าย (ลิตร)', (car) => car.cargoVolume, (val) => `${val} ลิตร`, 'higher')}
+                {renderSpecRow('ที่เก็บของด้านหน้า Frunk (ลิตร)', (car) => car.frunkVolume, (val) => val > 0 ? `${val} ลิตร` : 'ไม่มี', 'higher')}
+
+                {/* === ADAS === */}
+                {renderSectionHeader('ระบบช่วยขับขี่อัจฉริยะ (ADAS)', '#06b6d4')}
+                {renderSpecRow('ระดับระบบ ADAS', (car) => car.adasLevel ?? 0, (val) => {
+                  const labels: Record<number, string> = { 0: 'ไม่มี', 1: 'Level 1 (พื้นฐาน)', 2: 'Level 2 (โหมดกึ่งอัตโนมัติ)', 3: 'Level 2+ (สูงกว่า)' };
+                  return labels[val] || `Level ${val}`;
+                }, 'higher')}
+                {renderSpecRow('Adaptive Cruise Control (ACC)', (car) => car.adaptiveCruiseControl ?? false, undefined, undefined, true)}
+                {renderSpecRow('Lane Keeping Assist (LKA)', (car) => car.laneKeepAssist ?? false, undefined, undefined, true)}
+                {renderSpecRow('Auto Emergency Braking (AEB)', (car) => car.autoEmergencyBraking ?? false, undefined, undefined, true)}
+                {renderSpecRow('Blind Spot Monitor (BSM)', (car) => car.blindSpotMonitor ?? false, undefined, undefined, true)}
+                {renderSpecRow('จอดรถอัตโนมัติ (Auto Parking)', (car) => car.autoParking ?? false, undefined, undefined, true)}
+                {renderSpecRow('ฟีเจอร์ ADAS เพิ่มเติม', (car) => car.adasFeatures || '', (val) => val || '—')}
+              </tbody>
+            </table>
+          </div>
+
+          {/* Popular matchups below table */}
+          {popularMatchups.length > 0 && (
+            <PopularMatchups matchups={popularMatchups} onSelect={handleMatchupSelect} variant="compact" />
+          )}
         </>
       )}
 
-      {/* Compare Floating Bar */}
-      <CompareSelector />
+      {/* Compare Floating Bar removed for compare page */}
     </div>
   );
 };

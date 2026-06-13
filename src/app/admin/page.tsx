@@ -517,17 +517,17 @@ const AdminPage = () => {
       </div>
 
       {/* Navigation Tabs */}
-      <div className="flex border-b border-ev-border mb-8">
+      <div className="flex overflow-x-auto whitespace-nowrap no-scrollbar border-b border-ev-border mb-8">
         <button
           onClick={() => { setActiveTab('cars'); setIsCarFormOpen(false); }}
-          className={`flex items-center space-x-2 py-4 px-6 border-b-2 font-bold text-sm transition-all duration-300 ${activeTab === 'cars' ? 'border-electric-green text-electric-green' : 'border-transparent text-slate-400 hover:text-white'}`}
+          className={`flex items-center space-x-2 py-4 px-6 border-b-2 font-bold text-sm transition-all duration-300 shrink-0 ${activeTab === 'cars' ? 'border-electric-green text-electric-green' : 'border-transparent text-slate-400 hover:text-white'}`}
         >
           <Eye className="h-4 w-4" />
           <span>ฐานข้อมูลรถ EV ({cars.length})</span>
         </button>
         <button
           onClick={() => { setActiveTab('reviews'); setIsCarFormOpen(false); }}
-          className={`flex items-center space-x-2 py-4 px-6 border-b-2 font-bold text-sm transition-all duration-300 ${activeTab === 'reviews' ? 'border-electric-blue text-electric-blue' : 'border-transparent text-slate-400 hover:text-white'}`}
+          className={`flex items-center space-x-2 py-4 px-6 border-b-2 font-bold text-sm transition-all duration-300 shrink-0 ${activeTab === 'reviews' ? 'border-electric-blue text-electric-blue' : 'border-transparent text-slate-400 hover:text-white'}`}
         >
           <MessageSquare className="h-4 w-4" />
           <span>คัดกรองรีวิว ({reviews.length})</span>
@@ -662,12 +662,12 @@ const AdminPage = () => {
       {isCarFormOpen && (
         <form onSubmit={handleSubmitCarForm} className="rounded-2xl border border-slate-700 bg-ev-card shadow-2xl animate-slide-up flex flex-col overflow-hidden text-sm">
           {/* Form Header */}
-          <div className="flex items-center justify-between border-b border-ev-border p-6 bg-slate-900/50">
+          <div className="flex flex-col sm:flex-row sm:items-center justify-between border-b border-ev-border p-6 bg-slate-900/50 gap-4">
             <div>
               <h3 className="text-xl font-bold text-white">{editingCarId ? '✏️ แก้ไขสเปครถยนต์' : '✨ เพิ่มรถยนต์รุ่นใหม่'}</h3>
               <p className="text-xs text-slate-400 mt-1">กรอกข้อมูลพื้นฐาน มิติ สมรรถนะ และแบตเตอรี่ให้ครบถ้วน</p>
             </div>
-            <button type="button" onClick={() => setIsCarFormOpen(false)} className="rounded-lg bg-slate-800 px-4 py-2 text-xs font-bold text-slate-300 hover:bg-slate-700 transition-colors">
+            <button type="button" onClick={() => setIsCarFormOpen(false)} className="rounded-lg bg-slate-800 px-4 py-2 text-xs font-bold text-slate-300 hover:bg-slate-700 transition-colors w-full sm:w-auto text-center">
               ย้อนกลับ
             </button>
           </div>
@@ -800,11 +800,11 @@ const AdminPage = () => {
           </div>
 
           {/* Form Footer */}
-          <div className="flex justify-end gap-4 p-6 border-t border-ev-border bg-slate-900/80">
-            <button type="button" onClick={() => setIsCarFormOpen(false)} className="rounded-xl px-6 py-2.5 text-sm font-bold text-slate-400 hover:bg-slate-800 hover:text-white transition-colors">
+          <div className="flex flex-col sm:flex-row justify-end gap-3 p-6 border-t border-ev-border bg-slate-900/80 w-full">
+            <button type="button" onClick={() => setIsCarFormOpen(false)} className="rounded-xl px-6 py-2.5 text-sm font-bold text-slate-400 hover:bg-slate-800 hover:text-white transition-colors w-full sm:w-auto">
               ยกเลิก
             </button>
-            <button type="submit" className="flex items-center gap-2 rounded-xl bg-gradient-to-r from-electric-green to-electric-blue px-8 py-2.5 text-sm font-extrabold text-ev-dark hover:shadow-[0_0_15px_rgba(0,255,170,0.4)] transition-all">
+            <button type="submit" className="flex items-center justify-center gap-2 rounded-xl bg-gradient-to-r from-electric-green to-electric-blue px-8 py-2.5 text-sm font-extrabold text-ev-dark hover:shadow-[0_0_15px_rgba(0,255,170,0.4)] transition-all w-full sm:w-auto">
               <CheckCircle className="h-4 w-4" />
               {editingCarId ? 'บันทึกการแก้ไข' : 'เพิ่มรถเข้าระบบ'}
             </button>

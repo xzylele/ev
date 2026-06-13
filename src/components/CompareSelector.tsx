@@ -59,8 +59,8 @@ const CompareSelector = () => {
   if (!mounted || selectedCars.length === 0) return null;
 
   return (
-    <div className="fixed bottom-20 md:bottom-6 left-1/2 z-40 w-full max-w-4xl -translate-x-1/2 px-4 transition-all duration-500 animate-slide-up">
-      <div className="flex flex-col sm:flex-row items-center justify-between gap-4 rounded-xl border border-ev-border bg-ev-card/95 p-4 backdrop-blur-md">
+    <div className="fixed bottom-20 md:bottom-6 left-1/2 z-40 w-full max-w-4xl -translate-x-1/2 px-4 transition-all duration-500 animate-slide-up pointer-events-none">
+      <div className="flex flex-col sm:flex-row items-center justify-between gap-4 rounded-xl border border-ev-border bg-ev-card/95 p-4 backdrop-blur-md pointer-events-auto">
         {/* Left: Selected cars list */}
         <div className="flex flex-wrap items-center gap-3">
           <div className="text-sm font-bold text-white flex items-center gap-2">
