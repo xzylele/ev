@@ -52,11 +52,11 @@ const TableSkeleton = () => (
   <div className="w-full rounded-xl border border-ev-border bg-ev-card/10 overflow-hidden">
     {/* Header skeleton */}
     <div className="flex border-b border-ev-border">
-      <div className="w-32 sm:w-48 shrink-0 bg-ev-dark/80 p-3 sm:p-6">
+      <div className="w-32 sm:w-48 shrink-0 bg-ev-dark/80 p-3 sm:p-6 border-r border-ev-border/30">
         <div className="h-4 w-24 rounded bg-slate-800 animate-pulse" />
       </div>
       {[1, 2, 3].map(i => (
-        <div key={i} className="flex-1 min-w-[200px] p-6 flex flex-col items-center gap-3">
+        <div key={i} className="flex-1 min-w-[200px] p-6 flex flex-col items-center gap-3 border-r border-ev-border/20 last:border-r-0">
           <div className="h-20 w-28 rounded-lg bg-slate-800 animate-pulse" />
           <div className="h-3 w-16 rounded bg-slate-800 animate-pulse" />
           <div className="h-4 w-24 rounded bg-slate-800 animate-pulse" />
@@ -67,11 +67,11 @@ const TableSkeleton = () => (
     {/* Row skeletons */}
     {Array.from({ length: 12 }).map((_, i) => (
       <div key={i} className="flex border-b border-ev-border/40">
-        <div className="w-32 sm:w-48 shrink-0 bg-ev-dark/80 px-3 sm:px-6 py-4">
+        <div className="w-32 sm:w-48 shrink-0 bg-ev-dark/80 px-3 sm:px-6 py-4 border-r border-ev-border/30">
           <div className="h-3 w-32 rounded bg-slate-800 animate-pulse" />
         </div>
         {[1, 2, 3].map(j => (
-          <div key={j} className="flex-1 min-w-[200px] px-6 py-4 flex justify-center">
+          <div key={j} className="flex-1 min-w-[200px] px-6 py-4 flex justify-center border-r border-ev-border/20 last:border-r-0">
             <div className="h-3 w-20 rounded bg-slate-800 animate-pulse" />
           </div>
         ))}
@@ -286,6 +286,128 @@ const PopularMatchups = ({
   );
 };
 
+const getSpecHighlights = (cars: CarSpec[]): SpecHighlight[] => {
+  if (cars.length < 2) return [];
+
+  const highlights: SpecHighlight[] = [];
+
+  // 1. Price Winner (Lower is better)
+  const prices = cars.map(c => c.price);
+  const minPrice = Math.min(...prices);
+  const maxPrice = Math.max(...prices);
+  if (minPrice !== maxPrice) {
+    const winnerCar = cars.find(c => c.price === minPrice);
+    if (winnerCar) {
+      const diff = maxPrice - minPrice;
+      highlights.push({
+        category: 'ราคาคุ้มค่าที่สุด',
+        winner: `${winnerCar.brand} ${winnerCar.model}`,
+        brand: winnerCar.brand,
+        model: winnerCar.model,
+        value: `${new Intl.NumberFormat('th-TH').format(minPrice)} ฿`,
+        difference: `ประหยัดกว่ารุ่นที่แพงที่สุดถึง ${new Intl.NumberFormat('th-TH').format(diff)} ฿`,
+        iconType: 'price'
+      });
+    }
+  }
+
+  // 2. Range Winner (Higher is better)
+  const getRange = (c: CarSpec) => Math.max(c.rangeWLTP || 0, c.rangeNEDC || 0, c.rangeCLTC || 0);
+  const ranges = cars.map(getRange);
+  const maxRange = Math.max(...ranges);
+  const minRange = Math.min(...ranges);
+  if (maxRange > 0 && maxRange !== minRange) {
+    const winnerCar = cars.find(c => getRange(c) === maxRange);
+    if (winnerCar) {
+      const diff = maxRange - minRange;
+      const rangeStd = winnerCar.rangeWLTP ? 'WLTP' : winnerCar.rangeNEDC ? 'NEDC' : 'CLTC';
+      highlights.push({
+        category: 'ระยะทางวิ่งไกลที่สุด',
+        winner: `${winnerCar.brand} ${winnerCar.model}`,
+        brand: winnerCar.brand,
+        model: winnerCar.model,
+        value: `${maxRange} กม. (${rangeStd})`,
+        difference: `วิ่งได้ไกลกว่ารุ่นเริ่มต้น ${diff} กม.`,
+        iconType: 'range'
+      });
+    }
+  }
+
+  // 3. Acceleration Winner (Lower is better)
+  const accs = cars.map(c => c.acceleration0To100 || 999).filter(a => a < 999);
+  if (accs.length >= 2) {
+    const minAcc = Math.min(...accs);
+    const maxAcc = Math.max(...accs);
+    if (minAcc !== maxAcc) {
+      const winnerCar = cars.find(c => c.acceleration0To100 === minAcc);
+      if (winnerCar) {
+        const diff = (maxAcc - minAcc).toFixed(1);
+        highlights.push({
+          category: 'อัตราเร่งแรงที่สุด (0-100)',
+          winner: `${winnerCar.brand} ${winnerCar.model}`,
+          brand: winnerCar.brand,
+          model: winnerCar.model,
+          value: `${minAcc} วินาที`,
+          difference: `เร่งเร็วกว่ารุ่นช้าที่สุด ${diff} วินาที`,
+          iconType: 'acceleration'
+        });
+      }
+    }
+  }
+
+  // 4. Battery Capacity Winner (Higher is better)
+  const batteries = cars.map(c => c.batteryCapacity || 0);
+  const maxBattery = Math.max(...batteries);
+  const minBattery = Math.min(...batteries);
+  if (maxBattery > 0 && maxBattery !== minBattery) {
+    const winnerCar = cars.find(c => c.batteryCapacity === maxBattery);
+    if (winnerCar) {
+      const diff = (maxBattery - minBattery).toFixed(1);
+      highlights.push({
+        category: 'แบตเตอรี่ความจุสูงสุด',
+        winner: `${winnerCar.brand} ${winnerCar.model}`,
+        brand: winnerCar.brand,
+        model: winnerCar.model,
+        value: `${maxBattery} kWh`,
+        difference: `แบตเตอรี่ใหญ่กว่ารุ่นเล็กสุด ${diff} kWh`,
+        iconType: 'battery'
+      });
+    }
+  }
+
+  // 5. DC Charging Power Winner (Higher is better)
+  const dcs = cars.map(c => c.dcChargePower || 0);
+  const maxDC = Math.max(...dcs);
+  const minDC = Math.min(...dcs);
+  if (maxDC > 0 && maxDC !== minDC) {
+    const winnerCar = cars.find(c => c.dcChargePower === maxDC);
+    if (winnerCar) {
+      const diff = maxDC - minDC;
+      highlights.push({
+        category: 'ชาร์จด่วน DC เร็วที่สุด',
+        winner: `${winnerCar.brand} ${winnerCar.model}`,
+        brand: winnerCar.brand,
+        model: winnerCar.model,
+        value: `${maxDC} kW`,
+        difference: `รับกำลังไฟชาร์จมากกว่ารุ่นช้าสุด ${diff} kW`,
+        iconType: 'dc'
+      });
+    }
+  }
+
+  return highlights;
+};
+
+interface SpecHighlight {
+  category: string;
+  winner: string;
+  brand: string;
+  model: string;
+  value: string;
+  difference: string;
+  iconType: 'price' | 'range' | 'acceleration' | 'battery' | 'dc';
+}
+
 const ComparePageContent = () => {
   const router = useRouter();
   const searchParams = useSearchParams();
@@ -293,6 +415,8 @@ const ComparePageContent = () => {
   const [selectedCars, setSelectedCars] = useState<CarSpec[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [mounted, setMounted] = useState(false);
+
+  const highlights = getSpecHighlights(selectedCars);
 
   // Toggles
   const [highlightDiffs, setHighlightDiffs] = useState(false);
@@ -464,7 +588,7 @@ const ComparePageContent = () => {
             return (
               <td
                 key={car._id}
-                className="px-6 py-3.5 text-center whitespace-nowrap min-w-[200px] border-b border-ev-border/40"
+                className="px-6 py-3.5 text-center whitespace-nowrap min-w-[200px] border-b border-r border-ev-border/20"
               >
                 <BooleanValue value={!!val} />
               </td>
@@ -474,7 +598,7 @@ const ComparePageContent = () => {
           return (
             <td
               key={car._id}
-              className={`px-6 py-3.5 text-sm font-semibold text-center whitespace-nowrap min-w-[200px] border-b border-ev-border/40 ${isOptimal
+              className={`px-6 py-3.5 text-sm font-semibold text-center whitespace-nowrap min-w-[200px] border-b border-r border-ev-border/20 ${isOptimal
                 ? 'text-electric-green font-extrabold bg-electric-green/10'
                 : 'text-white'
                 }`}
@@ -485,7 +609,7 @@ const ComparePageContent = () => {
         })}
         {/* Fill empty slots */}
         {Array.from({ length: Math.max(0, 4 - selectedCars.length) }).map((_, i) => (
-          <td key={`empty-${i}`} className="px-6 py-3.5 text-slate-700 text-center border-b border-ev-border/40">-</td>
+          <td key={`empty-${i}`} className="px-6 py-3.5 text-slate-700 text-center border-b border-r border-ev-border/20">-</td>
         ))}
       </tr>
     );
@@ -641,6 +765,42 @@ const ComparePageContent = () => {
       ) : (
         /* ─── Comparison table ─── */
         <>
+          {/* Smart Spec Highlights */}
+          {highlights.length > 0 && (
+            <div className="mb-8 animate-slide-up">
+              <div className="flex items-center gap-2 mb-4">
+                <Sparkles className="h-4 w-4 text-electric-green" />
+                <h2 className="text-sm font-bold text-white">วิเคราะห์เปรียบเทียบจุดเด่น (Smart Spec Analysis)</h2>
+                <span className="text-xs text-slate-500 font-medium">— ไฮไลท์ข้อมูลสำคัญ</span>
+              </div>
+              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+                {highlights.map((h, i) => {
+                  return (
+                    <div
+                      key={i}
+                      className="rounded-xl border border-ev-border bg-ev-card/40 p-4 flex flex-col justify-between"
+                    >
+                      <div>
+                        <span className="text-[10px] font-bold text-slate-500 uppercase tracking-wider block mb-1">
+                          {h.category}
+                        </span>
+                        <h4 className="text-sm font-extrabold text-white leading-tight">
+                          {h.winner}
+                        </h4>
+                        <p className="text-base font-black text-electric-green mt-1">
+                          {h.value}
+                        </p>
+                      </div>
+                      <div className="mt-3 pt-2 border-t border-ev-border/40 text-[11px] text-slate-400 font-normal leading-relaxed">
+                        {h.difference}
+                      </div>
+                    </div>
+                  );
+                })}
+              </div>
+            </div>
+          )}
+
           <div className="w-full overflow-x-auto rounded-xl border border-ev-border bg-ev-card/10 no-scrollbar relative">
             <table className="w-full border-separate border-spacing-0">
               {/* Sticky thead: Car images & names */}
@@ -650,7 +810,7 @@ const ComparePageContent = () => {
                     <span className="text-xs font-extrabold uppercase text-slate-400 tracking-wider">เปรียบเทียบสเปค</span>
                   </th>
                   {selectedCars.map((car) => (
-                    <th key={car._id} className="px-6 py-5 text-center align-top min-w-[220px] bg-ev-dark border-b border-ev-border/30">
+                    <th key={car._id} className="px-6 py-5 text-center align-top min-w-[220px] bg-ev-dark border-b border-r border-ev-border/20">
                       <div className="relative flex flex-col items-center">
                         {/* Remove Button */}
                         <button
@@ -666,18 +826,22 @@ const ComparePageContent = () => {
                         <img
                           src={car.image}
                           alt={car.model}
-                          className="h-24 w-32 rounded-lg object-cover border border-ev-border"
+                          className="hidden sm:block h-24 w-32 rounded-lg object-cover border border-ev-border"
                         />
 
                         {/* Info */}
-                        <span className="text-[10px] font-bold text-slate-500 uppercase tracking-widest mt-3">{car.brand}</span>
-                        <h3 className="text-sm font-bold text-white mt-0.5 leading-tight">{car.model}</h3>
+                        <span className="text-[10px] font-bold text-slate-500 uppercase tracking-widest mt-1 sm:mt-3">{car.brand}</span>
+                        
+                        <Link href={`/cars/${car._id}`} className="hover:underline">
+                          <h3 className="text-xs sm:text-sm font-bold text-white mt-0.5 leading-tight">{car.model}</h3>
+                        </Link>
+                        
                         <p className="text-xs text-electric-green font-semibold mt-0.5">{car.trim}</p>
 
                         {/* Price — promoted to header */}
-                        <p className="mt-2 text-base font-extrabold text-white tabular-nums">
+                        <p className="mt-1 sm:mt-2 text-xs sm:text-base font-extrabold text-white tabular-nums">
                           {new Intl.NumberFormat('th-TH').format(car.price)}
-                          <span className="text-xs text-slate-400 font-semibold ml-1">฿</span>
+                          <span className="text-[10px] sm:text-xs text-slate-400 font-semibold ml-1">฿</span>
                         </p>
 
                         {/* Sibling Trims Dropdown Selector */}
@@ -699,7 +863,7 @@ const ComparePageContent = () => {
                                   }
                                 }
                               }}
-                              className="mt-2 text-[10px] font-bold bg-ev-card border border-ev-border text-slate-200 rounded-md px-2 py-1.5 outline-none focus:border-electric-green/60 cursor-pointer max-w-[180px] truncate transition-colors duration-150"
+                              className="mt-2 text-[10px] font-bold bg-ev-card border border-ev-border text-slate-200 rounded-md px-2 py-1.5 outline-none focus:border-electric-green/60 cursor-pointer max-w-[140px] sm:max-w-[180px] truncate transition-colors duration-150"
                             >
                               {siblingTrims.map(t => (
                                 <option key={t._id} value={t._id} className="bg-ev-dark text-white text-xs">
@@ -712,7 +876,7 @@ const ComparePageContent = () => {
 
                         <Link
                           href={`/cars/${car._id}`}
-                          className="mt-2 text-[10px] font-bold text-electric-blue hover:underline"
+                          className="hidden sm:inline-block mt-2 text-[10px] font-bold text-electric-blue hover:underline"
                         >
                           ดูหน้ารายละเอียดหลัก
                         </Link>
