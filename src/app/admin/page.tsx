@@ -17,6 +17,7 @@ interface CarSpec {
   trim: string;
   price: number;
   image: string;
+  gallery: string[];
   bodyType: 'Sedan' | 'SUV' | 'Hatchback' | 'MPV' | 'Others';
   warrantyYears: number;
   warrantyKm: number;
@@ -106,7 +107,7 @@ const defaultNewsForm: NewsFormData = {
 type CarFormData = Omit<CarSpec, '_id'>;
 
 const defaultCarForm: CarFormData = {
-  brand: '', model: '', trim: '', price: 0, image: '',
+  brand: '', model: '', trim: '', price: 0, image: '', gallery: [],
   bodyType: 'SUV', warrantyYears: 8, warrantyKm: 160000,
   length: 4500, width: 1850, height: 1600, wheelbase: 2700,
   cargoVolume: 400, frunkVolume: 0,
@@ -322,6 +323,7 @@ const AdminPage = () => {
     const pc = getPasscode();
     const carData = {
       ...carForm,
+      gallery: (carForm.gallery || []).map(u => u.trim()).filter(u => u !== ''),
       v2lPower: carForm.v2lSupport ? carForm.v2lPower : 0,
     };
 
@@ -758,13 +760,26 @@ const AdminPage = () => {
                   <InputField label="รุ่นย่อย (Trim) *" value={carForm.trim} onChange={v => updateField('trim', v)} placeholder="เช่น Long Range" />
                   <InputField label="ราคา (บาท) *" type="number" value={carForm.price} onChange={v => updateField('price', Number(v))} />
                   <div className="md:col-span-2">
-                    <label className="block text-xs font-bold text-slate-400 mb-1.5 flex items-center gap-1"><Link2 className="h-3 w-3" /> ลิงก์ภาพรถ *</label>
+                    <label className="block text-xs font-bold text-slate-400 mb-1.5 flex items-center gap-1"><Link2 className="h-3 w-3" /> ลิงก์ภาพรถหลัก *</label>
                     <input type="text" required value={carForm.image} onChange={e => { updateField('image', e.target.value); setImagePreviewError(false); }}
-                      className="w-full rounded-lg border border-ev-border bg-slate-900 px-3 py-2 text-white outline-none focus:border-electric-green transition-colors" placeholder="URL รูปภาพ" />
+                      className="w-full rounded-lg border border-ev-border bg-slate-900 px-3 py-2 text-white outline-none focus:border-electric-green transition-colors" placeholder="URL รูปภาพหลัก" />
                     {carForm.image && !imagePreviewError && (
                       <div className="mt-2">
                         {/* eslint-disable-next-line @next/next/no-img-element */}
                         <img src={carForm.image} alt="Preview" className="h-20 rounded-lg border border-ev-border object-cover" onError={() => setImagePreviewError(true)} />
+                      </div>
+                    )}
+                  </div>
+                  <div className="md:col-span-3 mt-2">
+                    <label className="block text-xs font-bold text-slate-400 mb-1.5 flex items-center gap-1"><Link2 className="h-3 w-3" /> แกลเลอรีภาพเพิ่มเติม (1 บรรทัดต่อ 1 ลิงก์)</label>
+                    <textarea value={carForm.gallery?.join('\n') || ''} onChange={e => updateField('gallery', e.target.value.split('\n'))}
+                      className="w-full rounded-lg border border-ev-border bg-slate-900 px-3 py-2 text-white outline-none focus:border-electric-green transition-colors text-xs resize-y" placeholder="https://example.com/image1.jpg&#10;https://example.com/image2.jpg" rows={3} />
+                    {carForm.gallery && carForm.gallery.length > 0 && (
+                      <div className="mt-2 flex gap-2 overflow-x-auto pb-2">
+                        {carForm.gallery.map((url, i) => url.trim() ? (
+                           // eslint-disable-next-line @next/next/no-img-element
+                           <img key={i} src={url} alt={`Gallery ${i+1}`} className="h-16 w-24 rounded border border-ev-border object-cover shrink-0" onError={(e) => { (e.target as HTMLImageElement).style.display = 'none'; }} />
+                        ) : null)}
                       </div>
                     )}
                   </div>

@@ -59,7 +59,7 @@ export async function POST(request: Request) {
       pros,
       cons,
       comment,
-      approved: true, // Auto-approve by default, can be toggled by admin
+      approved: false, // Auto-approve by default, can be toggled by admin
     });
 
     await newReview.save();

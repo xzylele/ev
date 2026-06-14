@@ -6,6 +6,7 @@ export interface IEV {
   trim: string;
   price: number; // in THB
   image: string;
+  gallery?: string[];
   bodyType: 'Sedan' | 'SUV' | 'Hatchback' | 'MPV' | 'Others';
   warrantyYears: number;
   warrantyKm: number;
@@ -60,6 +61,7 @@ const EVSchema = new Schema<IEV>(
     trim: { type: String, required: true, trim: true },
     price: { type: Number, required: true },
     image: { type: String, required: true },
+    gallery: { type: [String], default: [] },
     bodyType: { 
       type: String, 
       enum: ['Sedan', 'SUV', 'Hatchback', 'MPV', 'Others'], 
@@ -110,6 +112,7 @@ const EVSchema = new Schema<IEV>(
 );
 
 // Prevent compiling model multiple times
+delete mongoose.models.EV;
 const EV = mongoose.models.EV || mongoose.model<IEV>('EV', EVSchema);
 
 export default EV;

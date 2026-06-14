@@ -11,6 +11,7 @@ interface SiblingTrim {
   trim: string;
   price: number;
   image: string;
+  gallery?: string[];
   bodyType: string;
   warrantyYears: number;
   warrantyKm: number;
@@ -78,6 +79,12 @@ const CarDetailFullClient: React.FC<CarDetailFullClientProps> = ({
   const initialIndex = trims.findIndex(t => t._id === initialCarId);
   const [activeTrimIndex, setActiveTrimIndex] = useState(initialIndex !== -1 ? initialIndex : 0);
   const activeCar = trims[activeTrimIndex];
+
+  // Gallery main image state
+  const [mainImage, setMainImage] = useState(activeCar.image);
+  useEffect(() => {
+    setMainImage(activeCar.image);
+  }, [activeCar.image]);
 
   // Compare selection state
   const [isCompared, setIsCompared] = useState(false);
@@ -262,13 +269,41 @@ const CarDetailFullClient: React.FC<CarDetailFullClientProps> = ({
       {/* Hero Section */}
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
         {/* Left: Image Container */}
-        <div className="lg:col-span-7 rounded-2xl overflow-hidden border border-ev-border bg-ev-card/30">
-          {/* eslint-disable-next-line @next/next/no-img-element */}
-          <img
-            src={activeCar.image}
-            alt={`${activeCar.brand} ${activeCar.model}`}
-            className="w-full h-80 sm:h-96 object-cover"
-          />
+        <div className="lg:col-span-7 flex flex-col gap-4">
+          <div className="rounded-2xl overflow-hidden border border-ev-border bg-ev-card/30 shrink-0">
+            {/* eslint-disable-next-line @next/next/no-img-element */}
+            <img
+              src={mainImage}
+              alt={`${activeCar.brand} ${activeCar.model}`}
+              className="w-full h-80 sm:h-96 object-cover"
+            />
+          </div>
+          {/* Image Gallery Grid */}
+          {activeCar.gallery && activeCar.gallery.length > 0 && (
+            <div className="grid grid-cols-4 gap-3">
+              {/* Add main image to gallery grid for selection */}
+              <div className={`rounded-xl overflow-hidden border ${mainImage === activeCar.image ? 'border-electric-green ring-2 ring-electric-green/50' : 'border-ev-border'} bg-slate-900/40 aspect-video`}>
+                {/* eslint-disable-next-line @next/next/no-img-element */}
+                <img
+                  src={activeCar.image}
+                  alt={`${activeCar.brand} ${activeCar.model} main`}
+                  className="w-full h-full object-cover hover:scale-105 transition-transform duration-300 cursor-pointer"
+                  onClick={() => setMainImage(activeCar.image)}
+                />
+              </div>
+              {activeCar.gallery.map((url, idx) => (
+                <div key={idx} className={`rounded-xl overflow-hidden border ${mainImage === url ? 'border-electric-green ring-2 ring-electric-green/50' : 'border-ev-border'} bg-slate-900/40 aspect-video`}>
+                  {/* eslint-disable-next-line @next/next/no-img-element */}
+                  <img
+                    src={url}
+                    alt={`${activeCar.brand} ${activeCar.model} gallery ${idx + 1}`}
+                    className="w-full h-full object-cover hover:scale-105 transition-transform duration-300 cursor-pointer"
+                    onClick={() => setMainImage(url)}
+                  />
+                </div>
+              ))}
+            </div>
+          )}
         </div>
 
         {/* Right: Spec Header & Switcher */}
