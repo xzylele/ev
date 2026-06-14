@@ -3,7 +3,7 @@
 import React from 'react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
-import { Car, ArrowLeftRight, Calculator, LayoutDashboard, Zap } from 'lucide-react';
+import { Car, ArrowLeftRight, Calculator, LayoutDashboard, Zap, Sparkles, Newspaper } from 'lucide-react';
 
 const Navbar = () => {
   const pathname = usePathname();
@@ -12,6 +12,8 @@ const Navbar = () => {
     { name: 'ค้นหารถ EV', href: '/cars', icon: Car },
     { name: 'เปรียบเทียบสเปค', href: '/compare', icon: ArrowLeftRight },
     { name: 'เครื่องคำนวณ & จำลอง', href: '/calculators', icon: Calculator },
+    { name: 'แนะนำรถ EV', href: '/recommend', icon: Sparkles },
+    { name: 'ข่าวสาร EV', href: '/news', icon: Newspaper },
     { name: 'ระบบแอดมิน', href: '/admin', icon: LayoutDashboard },
   ];
 
