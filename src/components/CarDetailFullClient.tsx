@@ -538,6 +538,135 @@ const CarDetailFullClient: React.FC<CarDetailFullClientProps> = ({
         </div>
       </div>
 
+      {/* Engineering & Battery Deep-Dive Section */}
+      <div className="mt-12 rounded-2xl border border-ev-border bg-ev-card/20 p-6 space-y-6 animate-slide-up">
+        <div className="border-b border-ev-border/50 pb-4">
+          <div className="flex items-center space-x-2">
+            <div className="p-1 bg-electric-green/10 text-electric-green rounded">
+              <Zap className="h-4 w-4 fill-current" />
+            </div>
+            <h2 className="text-lg font-bold text-white tracking-tight">
+              วิเคราะห์เจาะลึกสถาปัตยกรรมวิศวกรรมไฟฟ้าของรถรุ่นนี้ (Engineering & Battery Analysis)
+            </h2>
+          </div>
+          <p className="text-xs text-slate-400 mt-1">บทวิเคราะห์ทางเทคนิคของระบบขับเคลื่อนและเคมีแบตเตอรี่ที่ส่งผลต่อประสิทธิภาพการใช้งานจริง</p>
+        </div>
+
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+          {/* Platform Voltage Card */}
+          {(() => {
+            const is800V = activeCar.voltageArchitecture === '800V';
+            const volt = is800V ? 800 : 400;
+            const maxKw = activeCar.dcChargePower || 0;
+            const maxAmps = maxKw > 0 ? Math.round((maxKw * 1000) / volt) : 0;
+
+            return (
+              <div className="rounded-xl border border-ev-border bg-ev-card/50 p-5 flex flex-col justify-between space-y-4">
+                <div>
+                  <div className="flex items-center justify-between">
+                    <span className="text-xs font-bold text-slate-500 uppercase tracking-wider">ระบบสถาปัตยกรรมแรงดันไฟฟ้า</span>
+                    <span className={`px-2.5 py-0.5 rounded text-xs font-extrabold border uppercase tracking-wider ${
+                      is800V
+                        ? 'border-electric-blue text-electric-blue bg-electric-blue/5'
+                        : 'border-slate-700 text-slate-400 bg-slate-800/20'
+                    }`}>
+                      {activeCar.voltageArchitecture} Platform
+                    </span>
+                  </div>
+
+                  <h3 className="text-md font-bold text-white mt-3 flex items-center gap-1.5">
+                    <BatteryCharging className="h-4 w-4 text-electric-blue" />
+                    <span>การจัดการความร้อนและกระแสไฟฟ้า</span>
+                  </h3>
+                  
+                  <p className="text-xs text-slate-400 leading-relaxed mt-2 font-normal">
+                    {is800V ? (
+                      `รถรุ่นนี้ใช้สถาปัตยกรรมแรงดันไฟฟ้าสูง 800V ทำงานด้วยการส่งกำลังวัตต์สูงโดยใช้กระแสไฟฟ้า (Amperes) ต่ำลง ช่วยลดการสูญเสียในรูปความร้อนตามกฎ P = I²R ส่งผลให้สายชาร์จและตัวแบตเตอรี่สะสมความร้อนน้อยลง ชาร์จ DC ได้เร็วและคงที่นานกว่าระบบทั่วไป`
+                    ) : (
+                      `รถรุ่นนี้ใช้สถาปัตยกรรมแรงดันไฟฟ้าระดับ 400V ซึ่งต้องการกระแสไฟฟ้า (Amperes) สูงกว่าในการชาร์จกระแสตรงความเร็วสูง ในสภาวะอากาศร้อนจัดของประเทศไทย ระบบระบายความร้อนเซลล์แบตเตอรี่จะทำงานอย่างหนัก และความเร็วชาร์จจะค่อย ๆ ถูกปรับลดลงในช่วงกลางถึงปลายกราฟ (Thermal Throttling) เพื่อถนอมแบตเตอรี่`
+                    )}
+                  </p>
+                </div>
+
+                <div className="pt-3 border-t border-ev-border/30 flex flex-col gap-2">
+                  <div className="flex justify-between text-xs font-semibold">
+                    <span className="text-slate-500">ประเมินกระแสไฟฟ้าชาร์จสูงสุด:</span>
+                    <span className="text-white font-mono">{maxAmps > 0 ? `${maxAmps} แอมแปร์ (A)` : 'ไม่ระบุ'}</span>
+                  </div>
+                  {maxAmps > 0 && (
+                    <div className="w-full h-1.5 bg-slate-900 rounded-full overflow-hidden">
+                      <div 
+                        className={`h-full rounded-full ${is800V ? 'bg-electric-blue' : 'bg-orange-500'}`}
+                        style={{ width: `${Math.min(100, (maxAmps / 450) * 100)}%` }}
+                      />
+                    </div>
+                  )}
+                  <span className="text-[10px] text-slate-500 font-normal leading-normal">
+                    * คำนวณโดยอิงจากสเปคชาร์จ DC สูงสุด {maxKw} kW บนตู้ชาร์จแรงดันที่สอดคล้องกัน
+                  </span>
+                </div>
+              </div>
+            );
+          })()}
+
+          {/* Battery Chemistry Card */}
+          {(() => {
+            const chem = activeCar.batteryType?.toUpperCase() || 'LFP';
+            const isLFP = chem === 'LFP';
+            const isNMC = chem === 'NMC';
+            
+            const maxKw = activeCar.dcChargePower || 0;
+            const cRate = activeCar.batteryCapacity > 0 ? Number((maxKw / activeCar.batteryCapacity).toFixed(2)) : 0;
+
+            return (
+              <div className="rounded-xl border border-ev-border bg-ev-card/50 p-5 flex flex-col justify-between space-y-4">
+                <div>
+                  <div className="flex items-center justify-between">
+                    <span className="text-xs font-bold text-slate-500 uppercase tracking-wider">โครงสร้างเคมีแบตเตอรี่</span>
+                    <span className="px-2.5 py-0.5 rounded text-xs font-extrabold border border-amber-400/25 text-amber-400 bg-amber-400/5 uppercase tracking-wider">
+                      {activeCar.batteryType || 'LFP'}
+                    </span>
+                  </div>
+
+                  <h3 className="text-md font-bold text-white mt-3 flex items-center gap-1.5">
+                    <ShieldAlert className="h-4 w-4 text-amber-400" />
+                    <span>คู่มือการใช้งานและถนอมอายุแบตเตอรี่</span>
+                  </h3>
+                  
+                  <p className="text-xs text-slate-400 leading-relaxed mt-2 font-normal">
+                    {isLFP ? (
+                      `แบตเตอรี่ชนิด Lithium Iron Phosphate (LFP) มีเสถียรภาพความร้อนสูง ปลอดภัยสูงมาก และมี Cycle Life ยาวนาน (2000-3000 รอบชาร์จ) แนะนำชาร์จไฟเต็ม 100% อย่างน้อยสัปดาห์ละ 1 ครั้ง เพื่อทำความสะอาดสถิติแรงดันของเซนเซอร์ BMS ป้องกันระดับพลังงานเพี้ยนสะสม (BMS Calibration Drift)`
+                    ) : isNMC ? (
+                      `แบตเตอรี่ชนิด Nickel Manganese Cobalt (NMC) โดดเด่นด้านความหนาแน่นพลังงานสูง ตัวรถจึงมีน้ำหนักเบาและได้ระยะวิ่งต่อขนาดแบตเตอรี่คุ้มค่า แนะนำจำกัดกำลังการชาร์จในชีวิตประจำวันไว้ที่ 80% (Limit charge to 80%) เพื่อลดแรงเค้นสะสมจากแรงดันไฟฟ้าเซลล์ ป้องกันความเสื่อมสภาพก่อนเวลาอันควร`
+                    ) : (
+                      `โปรดปฏิบัติตามคู่มือผู้ผลิตในการประเมินประสิทธิภาพและระดับการชาร์จที่เหมาะสมของเซลล์แบตเตอรี่ประเภทนี้เพื่อรักษาอายุการใช้งานสูงสุด`
+                    )}
+                  </p>
+                </div>
+
+                <div className="pt-3 border-t border-ev-border/30 flex flex-col gap-2">
+                  <div className="flex justify-between text-xs font-semibold">
+                    <span className="text-slate-500">ประเมินระดับความเค้นเคมี (C-Rate):</span>
+                    <span className="text-white font-mono">{cRate > 0 ? `${cRate}C` : 'ไม่ระบุ'}</span>
+                  </div>
+                  {cRate > 0 && (
+                    <div className="w-full h-1.5 bg-slate-900 rounded-full overflow-hidden">
+                      <div 
+                        className={`h-full rounded-full ${cRate >= 2.0 ? 'bg-red-400' : cRate >= 1.2 ? 'bg-amber-400' : 'bg-electric-green'}`}
+                        style={{ width: `${Math.min(100, (cRate / 4.0) * 100)}%` }}
+                      />
+                    </div>
+                  )}
+                  <span className="text-[10px] text-slate-500 font-normal leading-normal">
+                    * อัตราส่วนความแรงในการอัดไฟต่อขนาดเซลล์ (C-rate สูงขึ้นสร้างแรงเค้นเซลล์และความร้อนสูงขึ้น)
+                  </span>
+                </div>
+              </div>
+            );
+          })()}
+        </div>
+      </div>
+
       {/* Reviews Section */}
       <div className="mt-12 border-t border-ev-border pt-12">
         <div className="flex flex-col md:flex-row justify-between items-start md:items-center mb-8 gap-4">

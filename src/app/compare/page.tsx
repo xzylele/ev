@@ -426,6 +426,9 @@ const ComparePageContent = () => {
   const [activeSearchSlot, setActiveSearchSlot] = useState<number | null>(null);
   const [slotSearchQuery, setSlotSearchQuery] = useState('');
 
+  // Column Hover Highlight state
+  const [hoveredColIndex, setHoveredColIndex] = useState<number | null>(null);
+
   // Fetch all cars and parse initial selection
   useEffect(() => {
     setMounted(true);
@@ -580,15 +583,20 @@ const ComparePageContent = () => {
         <td className="px-3 sm:px-6 py-3.5 text-xs font-bold text-slate-400 whitespace-nowrap bg-ev-dark sticky left-0 z-10 w-32 sm:w-48 border-r border-b border-ev-border/30">
           {label}
         </td>
-        {selectedCars.map((car) => {
+        {selectedCars.map((car, idx) => {
           const val = fieldExtractor(car);
           const isOptimal = optimalValue !== null && Number(val) === optimalValue;
+          const isColumnHovered = hoveredColIndex === idx;
 
           if (isBooleanRow) {
             return (
               <td
                 key={car._id}
-                className="px-6 py-3.5 text-center whitespace-nowrap min-w-[200px] border-b border-r border-ev-border/20"
+                onMouseEnter={() => setHoveredColIndex(idx)}
+                onMouseLeave={() => setHoveredColIndex(null)}
+                className={`px-6 py-3.5 text-center whitespace-nowrap min-w-[200px] border-b border-r border-ev-border/20 transition-all duration-150 ${
+                  isColumnHovered ? 'bg-slate-900/40 border-r-slate-700/60' : ''
+                }`}
               >
                 <BooleanValue value={!!val} />
               </td>
@@ -598,9 +606,13 @@ const ComparePageContent = () => {
           return (
             <td
               key={car._id}
-              className={`px-6 py-3.5 text-sm font-semibold text-center whitespace-nowrap min-w-[200px] border-b border-r border-ev-border/20 ${isOptimal
+              onMouseEnter={() => setHoveredColIndex(idx)}
+              onMouseLeave={() => setHoveredColIndex(null)}
+              className={`px-6 py-3.5 text-sm font-semibold text-center whitespace-nowrap min-w-[200px] border-b border-r border-ev-border/20 transition-all duration-150 ${isOptimal
                 ? 'text-electric-green font-extrabold bg-electric-green/10'
                 : 'text-white'
+                } ${
+                  isColumnHovered ? 'bg-slate-900/40 border-r-slate-700/60' : ''
                 }`}
             >
               {formatter ? formatter(val) : String(val)}
@@ -809,80 +821,95 @@ const ComparePageContent = () => {
                   <th className="px-3 sm:px-6 py-5 text-left bg-ev-dark sticky left-0 z-40 w-32 sm:w-48 border-r border-b border-ev-border/30">
                     <span className="text-xs font-extrabold uppercase text-slate-400 tracking-wider">เปรียบเทียบสเปค</span>
                   </th>
-                  {selectedCars.map((car) => (
-                    <th key={car._id} className="px-6 py-5 text-center align-top min-w-[220px] bg-ev-dark border-b border-r border-ev-border/20">
-                      <div className="relative flex flex-col items-center">
-                        {/* Remove Button */}
-                        <button
-                          onClick={() => handleRemoveColumn(car._id)}
-                          className="absolute -top-2 right-0 rounded-md bg-ev-card border border-ev-border p-1 text-slate-400 hover:text-red-400 hover:border-red-400/40 transition-colors duration-150"
-                          title="ลบออก"
-                        >
-                          <X className="h-3.5 w-3.5" />
-                        </button>
+                  {selectedCars.map((car, idx) => {
+                    const isColumnHovered = hoveredColIndex === idx;
+                    return (
+                      <th
+                        key={car._id}
+                        onMouseEnter={() => setHoveredColIndex(idx)}
+                        onMouseLeave={() => setHoveredColIndex(null)}
+                        className={`px-6 py-5 text-center align-top min-w-[220px] bg-ev-dark border-b border-r border-ev-border/20 transition-all duration-150 relative ${
+                          isColumnHovered ? 'bg-slate-900/40 border-r-slate-700/60' : ''
+                        }`}
+                      >
+                        {/* Dynamic top accent highlight for hovered column */}
+                        <div className={`absolute top-0 left-0 right-0 h-1 bg-electric-green transition-opacity duration-150 ${
+                          isColumnHovered ? 'opacity-100' : 'opacity-0'
+                        }`} />
 
-                        {/* Image */}
-                        {/* eslint-disable-next-line @next/next/no-img-element */}
-                        <img
-                          src={car.image}
-                          alt={car.model}
-                          className="hidden sm:block h-24 w-32 rounded-lg object-cover border border-ev-border"
-                        />
+                        <div className="relative flex flex-col items-center">
+                          {/* Remove Button */}
+                          <button
+                            onClick={() => handleRemoveColumn(car._id)}
+                            className="absolute -top-2 right-0 rounded-md bg-ev-card border border-ev-border p-1 text-slate-400 hover:text-red-400 hover:border-red-400/40 transition-colors duration-150"
+                            title="ลบออก"
+                          >
+                            <X className="h-3.5 w-3.5" />
+                          </button>
 
-                        {/* Info */}
-                        <span className="text-[10px] font-bold text-slate-500 uppercase tracking-widest mt-1 sm:mt-3">{car.brand}</span>
-                        
-                        <Link href={`/cars/${car._id}`} className="hover:underline">
-                          <h3 className="text-xs sm:text-sm font-bold text-white mt-0.5 leading-tight">{car.model}</h3>
-                        </Link>
-                        
-                        <p className="text-xs text-electric-green font-semibold mt-0.5">{car.trim}</p>
+                          {/* Image */}
+                          {/* eslint-disable-next-line @next/next/no-img-element */}
+                          <img
+                            src={car.image}
+                            alt={car.model}
+                            className="hidden sm:block h-24 w-32 rounded-lg object-cover border border-ev-border"
+                          />
 
-                        {/* Price — promoted to header */}
-                        <p className="mt-1 sm:mt-2 text-xs sm:text-base font-extrabold text-white tabular-nums">
-                          {new Intl.NumberFormat('th-TH').format(car.price)}
-                          <span className="text-[10px] sm:text-xs text-slate-400 font-semibold ml-1">฿</span>
-                        </p>
+                          {/* Info */}
+                          <span className="text-[10px] font-bold text-slate-500 uppercase tracking-widest mt-1 sm:mt-3">{car.brand}</span>
+                          
+                          <Link href={`/cars/${car._id}`} className="hover:underline">
+                            <h3 className="text-xs sm:text-sm font-bold text-white mt-0.5 leading-tight">{car.model}</h3>
+                          </Link>
+                          
+                          <p className="text-xs text-electric-green font-semibold mt-0.5">{car.trim}</p>
 
-                        {/* Sibling Trims Dropdown Selector */}
-                        {(() => {
-                          const siblingTrims = allCars.filter(c => c.brand === car.brand && c.model === car.model);
-                          if (siblingTrims.length <= 1) return null;
-                          return (
-                            <select
-                              value={car._id}
-                              onChange={(e) => {
-                                const newCarId = e.target.value;
-                                const newCar = siblingTrims.find(c => c._id === newCarId);
-                                if (newCar) {
-                                  const index = selectedCars.findIndex(c => c._id === car._id);
-                                  if (index !== -1) {
-                                    const updated = [...selectedCars];
-                                    updated[index] = newCar;
-                                    updateCompareSelection(updated);
+                          {/* Price — promoted to header */}
+                          <p className="mt-1 sm:mt-2 text-xs sm:text-base font-extrabold text-white tabular-nums">
+                            {new Intl.NumberFormat('th-TH').format(car.price)}
+                            <span className="text-[10px] sm:text-xs text-slate-400 font-semibold ml-1">฿</span>
+                          </p>
+
+                          {/* Sibling Trims Dropdown Selector */}
+                          {(() => {
+                            const siblingTrims = allCars.filter(c => c.brand === car.brand && c.model === car.model);
+                            if (siblingTrims.length <= 1) return null;
+                            return (
+                              <select
+                                value={car._id}
+                                onChange={(e) => {
+                                  const newCarId = e.target.value;
+                                  const newCar = siblingTrims.find(c => c._id === newCarId);
+                                  if (newCar) {
+                                    const index = selectedCars.findIndex(c => c._id === car._id);
+                                    if (index !== -1) {
+                                      const updated = [...selectedCars];
+                                      updated[index] = newCar;
+                                      updateCompareSelection(updated);
+                                    }
                                   }
-                                }
-                              }}
-                              className="mt-2 text-[10px] font-bold bg-ev-card border border-ev-border text-slate-200 rounded-md px-2 py-1.5 outline-none focus:border-electric-green/60 cursor-pointer max-w-[140px] sm:max-w-[180px] truncate transition-colors duration-150"
-                            >
-                              {siblingTrims.map(t => (
-                                <option key={t._id} value={t._id} className="bg-ev-dark text-white text-xs">
-                                  {t.trim} ({new Intl.NumberFormat('th-TH').format(t.price)} ฿)
-                                </option>
-                              ))}
-                            </select>
-                          );
-                        })()}
+                                }}
+                                className="mt-2 text-[10px] font-bold bg-ev-card border border-ev-border text-slate-200 rounded-md px-2 py-1.5 outline-none focus:border-electric-green/60 cursor-pointer max-w-[140px] sm:max-w-[180px] truncate transition-colors duration-150"
+                              >
+                                {siblingTrims.map(t => (
+                                  <option key={t._id} value={t._id} className="bg-ev-dark text-white text-xs">
+                                    {t.trim} ({new Intl.NumberFormat('th-TH').format(t.price)} ฿)
+                                  </option>
+                                ))}
+                              </select>
+                            );
+                          })()}
 
-                        <Link
-                          href={`/cars/${car._id}`}
-                          className="hidden sm:inline-block mt-2 text-[10px] font-bold text-electric-blue hover:underline"
-                        >
-                          ดูหน้ารายละเอียดหลัก
-                        </Link>
-                      </div>
-                    </th>
-                  ))}
+                          <Link
+                            href={`/cars/${car._id}`}
+                            className="hidden sm:inline-block mt-2 text-[10px] font-bold text-electric-blue hover:underline"
+                          >
+                            ดูหน้ารายละเอียดหลัก
+                          </Link>
+                        </div>
+                      </th>
+                    );
+                  })}
 
                   {/* Empty add-car slots */}
                   {Array.from({ length: 4 - selectedCars.length }).map((_, idx) => {
@@ -890,7 +917,13 @@ const ComparePageContent = () => {
                     const isSearching = activeSearchSlot === slotIndex;
                     return (
                       <th key={`empty-header-${idx}`} className="px-6 py-5 text-center align-middle min-w-[220px] bg-ev-dark border-b border-ev-border/30">
-                        <div className="relative border border-dashed border-ev-border/60 hover:border-slate-500 rounded-xl p-6 transition-colors duration-150 flex flex-col items-center justify-center min-h-[160px]">
+                        <div className="relative border border-dashed border-ev-border/40 hover:border-electric-blue hover:bg-electric-blue/[0.02] rounded-xl p-6 transition-all duration-300 flex flex-col items-center justify-center min-h-[160px] group/slot overflow-hidden">
+                          {/* Technical reticles in corners */}
+                          <div className="absolute top-0 left-0 w-2.5 h-2.5 border-t border-l border-ev-border/60 group-hover/slot:border-electric-blue transition-colors" />
+                          <div className="absolute top-0 right-0 w-2.5 h-2.5 border-t border-r border-ev-border/60 group-hover/slot:border-electric-blue transition-colors" />
+                          <div className="absolute bottom-0 left-0 w-2.5 h-2.5 border-b border-l border-ev-border/60 group-hover/slot:border-electric-blue transition-colors" />
+                          <div className="absolute bottom-0 right-0 w-2.5 h-2.5 border-b border-r border-ev-border/60 group-hover/slot:border-electric-blue transition-colors" />
+
                           {!isSearching ? (
                             <button
                               onClick={() => {
@@ -899,11 +932,11 @@ const ComparePageContent = () => {
                               }}
                               className="flex flex-col items-center gap-2 text-slate-500 hover:text-white transition-colors duration-150"
                             >
-                              <Plus className="h-8 w-8 rounded-lg border border-dashed border-ev-border p-1.5" />
+                              <Plus className="h-8 w-8 rounded-lg border border-dashed border-ev-border p-1.5 text-slate-500 group-hover/slot:text-electric-blue group-hover/slot:border-electric-blue transition-colors" />
                               <span className="text-[11px] font-bold">เพิ่มรุ่นเปรียบเทียบ</span>
                             </button>
                           ) : (
-                            <div className="w-full space-y-3 relative">
+                            <div className="w-full space-y-3 relative z-10">
                               <div className="relative">
                                 <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-3.5 w-3.5 text-slate-500" />
                                 <input
@@ -1006,6 +1039,9 @@ const ComparePageContent = () => {
             </table>
           </div>
 
+          {/* Engineering Deep-Dive Analysis */}
+          <DeepDiveTechAnalysis selectedCars={selectedCars} />
+
           {/* Popular matchups below table */}
           {popularMatchups.length > 0 && (
             <PopularMatchups matchups={popularMatchups} onSelect={handleMatchupSelect} variant="compact" />
@@ -1014,6 +1050,252 @@ const ComparePageContent = () => {
       )}
 
       {/* Compare Floating Bar removed for compare page */}
+    </div>
+  );
+};
+
+/* ─── Deep-Dive Engineering Architecture Component ─── */
+const DeepDiveTechAnalysis = ({ selectedCars }: { selectedCars: CarSpec[] }) => {
+  const [activeTab, setActiveTab] = useState<'thermal' | 'chemistry' | 'grid'>('thermal');
+
+  if (selectedCars.length < 2) return null;
+
+  // Helpers to check conditions
+  const has800V = selectedCars.some(c => c.voltageArchitecture === '800V');
+  const has400V = selectedCars.some(c => c.voltageArchitecture === '400V');
+  
+  const hasLFP = selectedCars.some(c => c.batteryType?.toUpperCase() === 'LFP');
+  const hasNMC = selectedCars.some(c => c.batteryType?.toUpperCase() === 'NMC');
+
+  const cars800VNames = selectedCars.filter(c => c.voltageArchitecture === '800V').map(c => `${c.brand} ${c.model}`).join(', ');
+  const cars400VNames = selectedCars.filter(c => c.voltageArchitecture === '400V').map(c => `${c.brand} ${c.model}`).join(', ');
+  
+  const carsLFPNames = selectedCars.filter(c => c.batteryType?.toUpperCase() === 'LFP').map(c => `${c.brand} ${c.model}`).join(', ');
+  const carsNMCNames = selectedCars.filter(c => c.batteryType?.toUpperCase() === 'NMC').map(c => `${c.brand} ${c.model}`).join(', ');
+
+  return (
+    <div className="mt-12 rounded-xl border border-ev-border bg-ev-card/20 p-6 space-y-6 animate-slide-up">
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-ev-border/50 pb-4">
+        <div>
+          <div className="flex items-center gap-2">
+            <span className="p-1 bg-electric-green/10 text-electric-green rounded">
+              <Zap className="h-4 w-4 fill-current" />
+            </span>
+            <h2 className="text-md sm:text-lg font-bold text-white tracking-tight text-balance">
+              วิเคราะห์เจาะลึกสถาปัตยกรรมทางวิศวกรรม (Engineering Deep-Dive)
+            </h2>
+          </div>
+          <p className="text-xs text-slate-400 mt-1">วิเคราะห์เจาะลึกความร้อน กระแสไฟฟ้า และเคมีแบตเตอรี่จากการทำงานของระบบจริง</p>
+        </div>
+        <div className="flex flex-wrap gap-1 bg-ev-dark/80 p-1 border border-ev-border rounded-lg self-start">
+          <button
+            onClick={() => setActiveTab('thermal')}
+            className={`px-3 py-1.5 rounded-md text-xs font-bold transition-all ${
+              activeTab === 'thermal' ? 'bg-electric-green text-ev-dark' : 'text-slate-400 hover:text-white'
+            }`}
+          >
+            จัดการความร้อน & ระบบไฟ
+          </button>
+          <button
+            onClick={() => setActiveTab('chemistry')}
+            className={`px-3 py-1.5 rounded-md text-xs font-bold transition-all ${
+              activeTab === 'chemistry' ? 'bg-electric-green text-ev-dark' : 'text-slate-400 hover:text-white'
+            }`}
+          >
+            เคมีแบตเตอรี่ & อายุการใช้งาน
+          </button>
+          <button
+            onClick={() => setActiveTab('grid')}
+            className={`px-3 py-1.5 rounded-md text-xs font-bold transition-all ${
+              activeTab === 'grid' ? 'bg-electric-green text-ev-dark' : 'text-slate-400 hover:text-white'
+            }`}
+          >
+            การชาร์จตู้สาธารณะในไทย
+          </button>
+        </div>
+      </div>
+
+      {/* Dynamic side-by-side technical specs metrics cards */}
+      <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
+        {selectedCars.map((car) => {
+          // Calculate max current (A) = (kW * 1000) / V
+          const volt = car.voltageArchitecture === '800V' ? 800 : 400;
+          const maxKw = car.dcChargePower || 0;
+          const maxAmps = volt > 0 && maxKw > 0 ? Math.round((maxKw * 1000) / volt) : 0;
+          
+          // C-Rate = kW / kWh (Charging power density)
+          const cRate = car.batteryCapacity > 0 ? Number((maxKw / car.batteryCapacity).toFixed(2)) : 0;
+
+          return (
+            <div
+              key={car._id}
+              className="rounded-xl border border-ev-border bg-ev-card/60 p-4 flex flex-col justify-between"
+            >
+              <div>
+                <span className="text-[10px] font-bold text-slate-500 uppercase tracking-wider block">{car.brand}</span>
+                <h4 className="text-xs sm:text-sm font-extrabold text-white leading-tight truncate">{car.model}</h4>
+                <p className="text-[10px] text-electric-green font-semibold truncate mb-3">{car.trim}</p>
+                
+                <div className="space-y-2.5 pt-3 border-t border-ev-border/30">
+                  {/* Voltage Architecture */}
+                  <div className="flex justify-between items-center text-xs">
+                    <span className="text-slate-400">แรงดันระบบไฟ:</span>
+                    <span className={`px-2 py-0.5 rounded text-[10px] font-extrabold border uppercase tracking-wider ${
+                      car.voltageArchitecture === '800V'
+                        ? 'border-electric-blue text-electric-blue bg-electric-blue/5'
+                        : 'border-slate-700 text-slate-400 bg-slate-800/20'
+                    }`}>
+                      {car.voltageArchitecture}
+                    </span>
+                  </div>
+
+                  {/* Battery Chemistry */}
+                  <div className="flex justify-between items-center text-xs">
+                    <span className="text-slate-400">เคมีแบตเตอรี่:</span>
+                    <span className="text-white font-bold">{car.batteryType || 'ไม่ระบุ'}</span>
+                  </div>
+
+                  {/* Charging Peak Amperes */}
+                  <div className="flex flex-col gap-1 text-xs">
+                    <div className="flex justify-between items-center">
+                      <span className="text-slate-400">กระแสชาร์จ DC สูงสุด:</span>
+                      <span className="text-white font-mono font-bold">{maxAmps > 0 ? `${maxAmps} A` : 'ไม่ระบุ'}</span>
+                    </div>
+                    {maxAmps > 0 && (
+                      <div className="w-full h-1 bg-slate-800 rounded-full overflow-hidden mt-0.5">
+                        <div 
+                          className={`h-full rounded-full ${car.voltageArchitecture === '800V' ? 'bg-electric-blue' : 'bg-orange-500'}`}
+                          style={{ width: `${Math.min(100, (maxAmps / 450) * 100)}%` }}
+                        />
+                      </div>
+                    )}
+                  </div>
+
+                  {/* Charge Power density (C-Rate) */}
+                  <div className="flex flex-col gap-1 text-xs">
+                    <div className="flex justify-between items-center">
+                      <span className="text-slate-400" title="อัตราส่วนความเร็วการชาร์จต่อขนาดแบตเตอรี่ ยิ่งสูงยิ่งรับพลังงานได้หนาแน่นสูง">ประเมินความเค้นเคมี (C-Rate):</span>
+                      <span className="text-white font-mono font-bold">{cRate > 0 ? `${cRate}C` : '-'}</span>
+                    </div>
+                    {cRate > 0 && (
+                      <div className="w-full h-1 bg-slate-800 rounded-full overflow-hidden mt-0.5">
+                        <div 
+                          className={`h-full rounded-full ${cRate >= 2.0 ? 'bg-red-400' : cRate >= 1.2 ? 'bg-amber-400' : 'bg-electric-green'}`}
+                          style={{ width: `${Math.min(100, (cRate / 4.0) * 100)}%` }}
+                        />
+                      </div>
+                    )}
+                  </div>
+                </div>
+              </div>
+            </div>
+          );
+        })}
+      </div>
+
+      {/* Tabs Content - Technical Explanations */}
+      <div className="bg-slate-900/30 border border-ev-border/60 rounded-xl p-4 sm:p-6 text-sm text-slate-300 leading-relaxed font-normal">
+        {activeTab === 'thermal' && (
+          <div className="space-y-4 animate-fade-in">
+            <h3 className="text-white font-bold text-md flex items-center gap-2 border-b border-ev-border/30 pb-2">
+              <span className="h-2 w-2 rounded-full bg-electric-green" />
+              การจัดการความร้อนและความเสถียรของความเร็วชาร์จ (Thermal Control & Amperage Law)
+            </h3>
+            <p>
+              ตามหลักการทางฟิสิกส์ การสูญเสียพลังงานไฟฟ้าในรูปของความร้อนแปรผันตรงตามกำลังสองของกระแสไฟฟ้า 
+              (<strong className="text-white font-mono">{"P = I²R"}</strong>) หมายความว่ากระแสไฟฟ้าชาร์จที่ไหลเข้าตัวรถ (Amperes) 
+              คือปัจจัยหลักที่ก่อให้เกิดความร้อนสะสมในเซลล์แบตเตอรี่และสายชาร์จ
+            </p>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mt-4">
+              <div className="p-4 bg-slate-950/40 rounded-lg border border-ev-border/40">
+                <span className="block text-xs font-bold text-electric-blue uppercase mb-2">สถาปัตยกรรม 800V High-Voltage</span>
+                <p className="text-xs text-slate-400 leading-relaxed">
+                  เนื่องจากใช้แรงดันไฟฟ้าที่สูงกว่าเท่าตัว ทำให้ต้องการกระแสไฟฟ้าชาร์จ (Amperes) น้อยลงครึ่งหนึ่งในการส่งกำลังวัตต์ชาร์จ (kW) ที่เท่ากัน 
+                  ช่วยลดความร้อนสะสมในระบบได้สูงสุดถึง 4 เท่า ส่งผลให้รถยนต์ที่ใช้ระบบ 800V 
+                  {cars800VNames ? ` (เช่น ${cars800VNames})` : ''} สามารถรับกำลังชาร์จระดับสูงสุด (Peak Charging Rate) 
+                  ได้ยาวนานขึ้น กราฟชาร์จแบนขึ้น (Flatter Charging Curve) และไม่เจอปัญหาการลดสปีดชาร์จกระทันหันจากความร้อนสะสม (Thermal Throttling)
+                </p>
+              </div>
+              <div className="p-4 bg-slate-950/40 rounded-lg border border-ev-border/40">
+                <span className="block text-xs font-bold text-orange-400 uppercase mb-2">สถาปัตยกรรม 400V Standard-Voltage</span>
+                <p className="text-xs text-slate-400 leading-relaxed">
+                  การชาร์จความเร็วสูงในรถสถาปัตยกรรม 400V {cars400VNames ? ` (เช่น ${cars400VNames})` : ''} 
+                  จำเป็นต้องรีดกระแสไฟฟ้าขึ้นไปสูงมาก (มักจะทะลุ 300A-400A) ก่อให้เกิดความชื้นและความร้อนสะสมสูงมากในเวลาอันสั้น 
+                  ระบบควบคุมแบตเตอรี่ (BMS) จึงจำเป็นต้องสั่งลดสปีดการชาร์จช้าลงเร็วกว่าปกติเพื่อป้องกันไม่ให้แบตเตอรี่เสื่อมสภาพเฉียบพลันจากอุณหภูมิที่สูงเกินขีดจำกัด
+                </p>
+              </div>
+            </div>
+          </div>
+        )}
+
+        {activeTab === 'chemistry' && (
+          <div className="space-y-4 animate-fade-in">
+            <h3 className="text-white font-bold text-md flex items-center gap-2 border-b border-ev-border/30 pb-2">
+              <span className="h-2 w-2 rounded-full bg-amber-400" />
+              การเปรียบเทียบเคมีแบตเตอรี่และแนวทางการใช้งาน (Battery Chemistry Degradation & Care)
+            </h3>
+            <p>
+              ชนิดเคมีของแบตเตอรี่ในรถยนต์ไฟฟ้าส่งผลโดยตรงต่ออายุการใช้งาน (Cycle Life) ความไวในการชาร์จช่วงปลาย และน้ำหนักของตัวรถ
+            </p>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mt-4">
+              <div className="p-4 bg-slate-950/40 rounded-lg border border-ev-border/40">
+                <div className="flex items-center justify-between mb-2">
+                  <span className="text-xs font-bold text-electric-green uppercase">Lithium Iron Phosphate (LFP)</span>
+                  {hasLFP && <span className="text-[10px] text-electric-green bg-electric-green/10 border border-electric-green/20 px-1.5 py-0.5 rounded font-bold">มีในคู่เปรียบเทียบ</span>}
+                </div>
+                <ul className="text-xs text-slate-400 space-y-1.5 list-disc pl-4 leading-relaxed">
+                  <li><strong>จุดเด่น:</strong> ปลอดภัยสูงมาก อุณหภูมิวิกฤตสลายตัวสูง อายุการใช้งานยาวนาน (2,000 - 3,000 รอบชาร์จ) ต้นทุนต่อหน่วยถูกกว่า</li>
+                  <li><strong>ข้อแนะนำชาร์จ:</strong> <strong className="text-white">ควรชาร์จเต็ม 100% อย่างน้อยสัปดาห์ละ 1 ครั้ง</strong> เพื่อทำความสะอาดสถิติแรงดันของเซลล์แบตเตอรี่ ป้องกันระบบ BMS คำนวณแบตเตอรี่เพี้ยน (SOC Calibration Drift) เนื่องจากกราฟแรงดันของ LFP มีความชันต่ำมาก</li>
+                  {carsLFPNames && <li className="text-slate-300 list-none mt-2 italic font-semibold">— รุ่นที่ใช้ LFP: {carsLFPNames}</li>}
+                </ul>
+              </div>
+              <div className="p-4 bg-slate-950/40 rounded-lg border border-ev-border/40">
+                <div className="flex items-center justify-between mb-2">
+                  <span className="text-xs font-bold text-electric-blue uppercase">Lithium Nickel Manganese Cobalt (NMC)</span>
+                  {hasNMC && <span className="text-[10px] text-electric-blue bg-electric-blue/10 border border-electric-blue/20 px-1.5 py-0.5 rounded font-bold">มีในคู่เปรียบเทียบ</span>}
+                </div>
+                <ul className="text-xs text-slate-400 space-y-1.5 list-disc pl-4 leading-relaxed">
+                  <li><strong>จุดเด่น:</strong> ความหนาแน่นพลังงานสูง (Energy Density) ทำให้ได้แบตเตอรี่ความจุใหญ่ที่น้ำหนักเบากว่า ชาร์จเร็วช่วงท้ายได้ดีกว่า</li>
+                  <li><strong>ข้อแนะนำชาร์จ:</strong> <strong className="text-white">แนะนำชาร์จจำกัดไว้ที่ 80% สำหรับใช้งานประจำวัน</strong> และชาร์จเต็ม 100% เฉพาะเวลาเดินทางไกลเท่านั้น เพื่อหลีกเลี่ยงความเค้นสะสมจากแรงดันไฟฟ้าเซลล์สูงเกินไป (Voltage Stress) ที่จะทำให้สารเคมีภายในเสื่อมสภาพเร็ว</li>
+                  {carsNMCNames && <li className="text-slate-300 list-none mt-2 italic font-semibold">— รุ่นที่ใช้ NMC: {carsNMCNames}</li>}
+                </ul>
+              </div>
+            </div>
+          </div>
+        )}
+
+        {activeTab === 'grid' && (
+          <div className="space-y-4 animate-fade-in">
+            <h3 className="text-white font-bold text-md flex items-center gap-2 border-b border-ev-border/30 pb-2">
+              <span className="h-2 w-2 rounded-full bg-purple-400" />
+              ข้อจำกัดและการทำงานจริงกับโครงข่ายตู้ชาร์จสาธารณะในไทย (Thai Charging Infrastructure Grid Compatibility)
+            </h3>
+            <p>
+              กำลังวัตต์การชาร์จจริงที่ได้รับจากตู้ DC สาธารณะในประเทศไทย ไม่ได้ขึ้นอยู่กับสเปคของตัวรถเพียงอย่างเดียว แต่เกิดจากการตกลงกระแสและแรงดันร่วมกันระหว่างตู้ชาร์จและรถยนต์
+            </p>
+            <div className="space-y-3 mt-4 text-xs text-slate-400">
+              <div className="p-4 bg-slate-950/40 rounded-lg border border-ev-border/40">
+                <h4 className="font-bold text-white mb-1">การใช้งานรถ 800V กับตู้ชาร์จสาธารณะ</h4>
+                <p className="leading-relaxed">
+                  เมื่อชาร์จด้วยตู้ชาร์จความเร็วสูงยุคใหม่ที่ปล่อยแรงดันได้สูงถึง 1,000V (เช่น ตู้ PEA Volta 120-360kW, EV Station PluZ, Tesla Supercharger V4) ตัวรถจะสามารถชาร์จได้ที่ความเร็วสูงสุดของสเปค 
+                  แต่สำหรับตู้ชาร์จไฟกระแสตรงรุ่นเก่าในไทยที่มีกำลังแรงดันจำกัดที่ 400V/500V รถยนต์ 800V จะต้องทำการเพิ่มแรงดันไฟฟ้าผ่านตัวแปลงกำลังภายในรถ 
+                  (Onboard DC-DC Booster) ส่งผลให้ความเร็วสูงสุดในการชาร์จถูกจำกัดอยู่ระดับไม่เกิน 100kW - 150kW ขึ้นอยู่กับกำลังรับของ Booster ในรถรุ่นนั้น ๆ
+                </p>
+              </div>
+              <div className="p-4 bg-slate-950/40 rounded-lg border border-ev-border/40">
+                <h4 className="font-bold text-white mb-1">ข้อจำกัดกระแสไฟฟ้าของหัวชาร์จต่อรถ 400V</h4>
+                <p className="leading-relaxed">
+                  ตู้ชาร์จ DC ส่วนใหญ่ในประเทศไทยที่มีให้บริการทั่วไป จะมีขีดจำกัดสูงสุดของกระแสไฟฟ้าของหัวสายชาร์จอยู่ที่ 250 แอมแปร์ (250A) 
+                  ทำให้รถระบบไฟ 400V จะมีความเร็วชาร์จ DC สูงสุดจริงที่ตู้ทั่วไปจ่ายให้ได้จำกัดที่ประมาณ 
+                  <strong className="text-white font-mono"> {"400V x 250A = 100kW"} </strong> 
+                  แม้ตัวรถจะเคลมว่ารับไฟได้ถึง 150kW ก็ตาม ยกเว้นว่าจะเข้าชาร์จที่สถานีชาร์จที่มีสายชาร์จระบายความร้อนด้วยของเหลวแบบพิเศษ (Liquid-Cooled Cable) 
+                  ซึ่งสามารถเร่งกระแสไฟฟ้าขึ้นไปได้ถึง 400A - 500A จึงจะได้รับความเร็วชาร์จเต็มประสิทธิภาพของรถ
+                </p>
+              </div>
+            </div>
+          </div>
+        )}
+      </div>
     </div>
   );
 };

@@ -109,7 +109,9 @@ export default async function Home() {
   return (
     <div className="relative isolate overflow-hidden min-h-screen">
       <KeyboardShortcuts />
-      {/* Background glow effects removed for Flat & Bordered system */}
+      {/* Precision Grid Background Pattern */}
+      <div className="absolute inset-0 -z-10 bg-[linear-gradient(to_right,#1e293b50_1px,transparent_1px),linear-gradient(to_bottom,#1e293b50_1px,transparent_1px)] bg-[size:4rem_4rem] [mask-image:radial-gradient(ellipse_60%_50%_at_50%_0%,#000_70%,transparent_100%)] opacity-25" />
+      <div className="absolute inset-0 -z-10 bg-[linear-gradient(to_right,#1e293b25_1px,transparent_1px),linear-gradient(to_bottom,#1e293b25_1px,transparent_1px)] bg-[size:1rem_1rem] [mask-image:radial-gradient(ellipse_60%_50%_at_50%_0%,#000_70%,transparent_100%)] opacity-20" />
 
       {/* Hero Section */}
       <div className="mx-auto max-w-7xl px-6 pt-16 pb-24 sm:pt-24 lg:px-8">
@@ -129,13 +131,13 @@ export default async function Home() {
             <div className="flex items-center justify-center gap-x-6">
               <Link
                 href="/cars"
-                className="rounded-xl bg-electric-green border border-ev-border px-6 py-3.5 text-sm font-semibold text-ev-dark hover:bg-electric-green/90 transition-all duration-300"
+                className="rounded-xl bg-electric-green border border-ev-border px-6 py-3.5 text-sm font-semibold text-ev-dark hover:bg-electric-green/90 transition-all duration-300 font-bold"
               >
                 ค้นหารถยนต์ไฟฟ้า
               </Link>
               <Link
                 href="/compare"
-                className="text-sm font-semibold leading-6 text-slate-300 hover:text-white flex items-center space-x-1 group"
+                className="text-sm font-semibold leading-6 text-slate-300 hover:text-white flex items-center space-x-1 group font-bold"
               >
                 <span>เปรียบเทียบสเปค</span>
                 <ArrowRight className="h-4 w-4 transition-transform duration-300 group-hover:translate-x-1" />
@@ -151,6 +153,26 @@ export default async function Home() {
               <kbd className="px-1.5 py-0.5 bg-ev-card border border-ev-border rounded text-slate-400">C</kbd>
               <span>เปรียบเทียบ</span>
             </div>
+          </div>
+        </div>
+
+        {/* Live Database Stats (Precision Row Layout) */}
+        <div className="mx-auto mt-16 max-w-4xl rounded-xl border border-ev-border bg-ev-card/30 overflow-hidden grid grid-cols-2 md:grid-cols-4 divide-y md:divide-y-0 md:divide-x divide-ev-border text-center">
+          <div className="p-5 flex flex-col justify-center">
+            <span className="text-3xl font-black text-white leading-none">42+</span>
+            <span className="text-[10px] font-bold text-slate-500 uppercase tracking-widest mt-2">รุ่นย่อยในฐานข้อมูล</span>
+          </div>
+          <div className="p-5 flex flex-col justify-center">
+            <span className="text-3xl font-black text-electric-green leading-none">280 kW</span>
+            <span className="text-[10px] font-bold text-slate-500 uppercase tracking-widest mt-2">ความเร็วชาร์จ DC สูงสุด</span>
+          </div>
+          <div className="p-5 flex flex-col justify-center">
+            <span className="text-3xl font-black text-electric-blue leading-none">800V</span>
+            <span className="text-[10px] font-bold text-slate-500 uppercase tracking-widest mt-2">สถาปัตยกรรมแรงดันสูง</span>
+          </div>
+          <div className="p-5 flex flex-col justify-center">
+            <span className="text-3xl font-black text-white leading-none">140+</span>
+            <span className="text-[10px] font-bold text-slate-500 uppercase tracking-widest mt-2">รีวิวโดยผู้ใช้งานจริง</span>
           </div>
         </div>
 
@@ -297,7 +319,7 @@ export default async function Home() {
               {featuredCars.map((car: any) => (
                 <div
                   key={car._id}
-                  className="group/card flex flex-col overflow-hidden rounded-xl border border-ev-border bg-ev-card transition-all duration-300 hover:border-slate-600"
+                  className="group/card flex flex-col overflow-hidden rounded-xl border border-ev-border bg-ev-card transition-all duration-300 hover:border-electric-green/60"
                 >
                   {/* Image Container */}
                   <div className="relative h-48 w-full overflow-hidden bg-slate-900">
@@ -308,6 +330,18 @@ export default async function Home() {
                       loading="lazy"
                       className="h-full w-full object-cover transition-transform duration-500 group-hover/card:scale-105"
                     />
+                    
+                    {/* Tech specs platform indicator */}
+                    <div className="absolute top-4 left-4 rounded-lg bg-ev-dark/95 px-2 py-1 text-[9px] font-extrabold border border-ev-border flex items-center gap-1 text-white tracking-wider">
+                      <span className={car.voltageArchitecture === '800V' ? 'text-electric-blue' : 'text-slate-400'}>
+                        {car.voltageArchitecture}
+                      </span>
+                      <span className="text-slate-600">|</span>
+                      <span className="text-amber-400">
+                        {car.batteryType}
+                      </span>
+                    </div>
+
                     <div className="absolute top-4 right-4 rounded-lg bg-ev-dark/80 px-2.5 py-1 text-xs font-semibold border border-ev-border text-electric-green">
                       {car.bodyType}
                     </div>
