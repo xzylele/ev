@@ -3,7 +3,7 @@
 import React from 'react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
-import { Car, ArrowLeftRight, Calculator, LayoutDashboard, Zap, Sparkles, Newspaper } from 'lucide-react';
+import { Car, ArrowLeftRight, Calculator, LayoutDashboard, Zap, Sparkles, Newspaper, ShieldCheck } from 'lucide-react';
 
 const Navbar = () => {
   const pathname = usePathname();
@@ -12,6 +12,7 @@ const Navbar = () => {
     { name: 'ค้นหารถ EV', href: '/cars', icon: Car },
     { name: 'เปรียบเทียบสเปค', href: '/compare', icon: ArrowLeftRight },
     { name: 'เครื่องคำนวณ & จำลอง', href: '/calculators', icon: Calculator },
+    { name: 'เช็คเบี้ยประกัน EV', href: '/insurance', icon: ShieldCheck },
     { name: 'แนะนำรถ EV', href: '/recommend', icon: Sparkles },
     { name: 'ข่าวสาร EV', href: '/news', icon: Newspaper },
     { name: 'ระบบแอดมิน', href: '/admin', icon: LayoutDashboard },
@@ -44,11 +45,10 @@ const Navbar = () => {
                   <Link
                     key={item.href}
                     href={item.href}
-                    className={`flex items-center space-x-2 px-4 py-2 rounded-xl text-sm font-medium transition-all duration-300 ${
-                      isActive
-                        ? 'bg-electric-green/10 text-electric-green border border-electric-green/20'
-                        : 'text-slate-400 hover:text-white hover:bg-slate-800/40 border border-transparent'
-                    }`}
+                    className={`flex items-center space-x-2 px-4 py-2 rounded-xl text-sm font-medium transition-all duration-300 ${isActive
+                      ? 'bg-electric-green/10 text-electric-green border border-electric-green/20'
+                      : 'text-slate-400 hover:text-white hover:bg-slate-800/40 border border-transparent'
+                      }`}
                   >
                     <Icon className="h-4 w-4" />
                     <span>{item.name}</span>
@@ -70,11 +70,10 @@ const Navbar = () => {
               <Link
                 key={item.href}
                 href={item.href}
-                className={`flex flex-col items-center justify-center flex-1 py-1.5 px-1 rounded-xl transition-all duration-300 border ${
-                  isActive
-                    ? 'bg-electric-green/10 text-electric-green border-electric-green/20'
-                    : 'text-slate-400 hover:text-white hover:bg-slate-800/40 border-transparent'
-                }`}
+                className={`flex flex-col items-center justify-center flex-1 py-1.5 px-1 rounded-xl transition-all duration-300 border ${isActive
+                  ? 'bg-electric-green/10 text-electric-green border-electric-green/20'
+                  : 'text-slate-400 hover:text-white hover:bg-slate-800/40 border-transparent'
+                  }`}
               >
                 <Icon className="h-5 w-5" />
                 <span className="text-[10px] mt-1 whitespace-nowrap font-medium tracking-tight">
